@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SIGNAL Role Views</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🧭</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Condensed:wght@600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#EEF0F4;
+    --surface:#FFFFFF;
+    --surface-2:#E3E7EE;
+    --ink:#171B2B;
+    --muted:#5B6275;
+    --line:rgba(23,27,43,0.13);
+    --accent:#4A3FCB;
+    --accent-soft:rgba(74,63,203,0.12);
+    --risk:#C2410C;
+    --risk-soft:rgba(194,65,12,0.12);
+    --good:#1F7A4C;
+    --good-soft:rgba(31,122,76,0.12);
+    --web:#2B5FAE;
+    --web-soft:rgba(43,95,174,0.12);
+    --shadow: 0 1px 2px rgba(23,27,43,0.06), 0 8px 24px -8px rgba(23,27,43,0.14);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#11131D; --surface:#171B2B; --surface-2:#1F2436; --ink:#E7E9F2; --muted:#9499AC;
+      --line:rgba(231,233,242,0.14); --accent:#8B7FFF; --accent-soft:rgba(139,127,255,0.18);
+      --risk:#F0794A; --risk-soft:rgba(240,121,74,0.16); --good:#4FAF77; --good-soft:rgba(79,175,119,0.16);
+      --web:#6C9BE8; --web-soft:rgba(108,155,232,0.16);
+      --shadow: 0 1px 2px rgba(0,0,0,0.35), 0 8px 24px -8px rgba(0,0,0,0.55);
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#11131D; --surface:#171B2B; --surface-2:#1F2436; --ink:#E7E9F2; --muted:#9499AC;
+    --line:rgba(231,233,242,0.14); --accent:#8B7FFF; --accent-soft:rgba(139,127,255,0.18);
+    --risk:#F0794A; --risk-soft:rgba(240,121,74,0.16); --good:#4FAF77; --good-soft:rgba(79,175,119,0.16);
+    --web:#6C9BE8; --web-soft:rgba(108,155,232,0.16);
+    --shadow: 0 1px 2px rgba(0,0,0,0.35), 0 8px 24px -8px rgba(0,0,0,0.55);
+  }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg); color:var(--ink);
+    font-family:'IBM Plex Sans', system-ui, sans-serif;
+    font-size:16px; line-height:1.55; -webkit-font-smoothing:antialiased;
+  }
+  ::selection{ background:var(--accent-soft); }
+  .wrap{ max-width:900px; margin:0 auto; padding:0 24px 80px; }
+
+  .eyebrow{
+    display:inline-block; font-family:'IBM Plex Mono', monospace; font-size:12.5px;
+    letter-spacing:0.08em; text-transform:uppercase; color:var(--accent); font-weight:600; margin-bottom:10px;
+  }
+  h1,h2,h3{ font-family:'IBM Plex Sans Condensed', 'IBM Plex Sans', sans-serif; font-weight:700; text-wrap:balance; letter-spacing:-0.01em; margin:0; }
+  h1{ font-size:clamp(32px,5vw,46px); line-height:1.08; }
+  h2{ font-size:clamp(23px,3.2vw,28px); }
+  h3{ font-size:15px; font-weight:600; }
+  p{ margin:0; }
+  .lede{ color:var(--muted); max-width:62ch; font-size:16.5px; }
+
+  header.hero{ padding:60px 0 32px; }
+
+  /* ---------- presenter shell ---------- */
+  .presenter{ background:var(--surface); border:1px solid var(--line); border-radius:16px; box-shadow:var(--shadow); overflow:hidden; }
+  .presenter-top{ padding:18px 24px 0; display:flex; align-items:center; gap:14px; }
+  .progress-track{ flex:1; height:4px; background:var(--surface-2); border-radius:4px; overflow:hidden; }
+  .progress-fill{ height:100%; background:var(--accent); border-radius:4px; transition:width 0.35s ease; }
+
+  .notes-toggle{
+    display:inline-flex; align-items:center; gap:6px; font-family:'IBM Plex Mono',monospace; font-size:10.5px;
+    color:var(--muted); background:none; border:1px solid var(--line); border-radius:20px; padding:4px 10px 4px 6px;
+    cursor:pointer; white-space:nowrap; transition:border-color 0.15s,color 0.15s;
+  }
+  .notes-toggle:hover{ border-color:var(--accent); }
+  .notes-toggle .dot{ width:7px; height:7px; border-radius:50%; background:var(--line); transition:background 0.2s; }
+  .notes-toggle[aria-pressed="true"]{ color:var(--accent); border-color:var(--accent); }
+  .notes-toggle[aria-pressed="true"] .dot{ background:var(--accent); }
+
+  .beat-nav{ position:relative; display:flex; gap:4px; padding:14px 24px 0; }
+  .beat-dot{
+    flex:1; position:relative; z-index:1; background:none; border:none; cursor:pointer;
+    font-family:'IBM Plex Mono', monospace; font-size:14px; font-weight:600; color:var(--muted);
+    padding:8px 4px 14px; text-align:center; transition:color 0.25s;
+  }
+  .beat-dot.active{ color:var(--accent); }
+  .beat-dot:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; border-radius:6px; }
+  .beat-indicator{
+    position:absolute; bottom:0; height:2.5px; background:var(--accent); border-radius:2px;
+    transition:left 0.35s ease, width 0.35s ease; left:24px; width:0;
+  }
+
+  .stage{ padding:30px 28px 32px; border-top:1px solid var(--line); min-height:380px; }
+  .beat-panel{ display:none; }
+  .beat-panel.active{ display:block; animation:beatIn 0.4s ease; }
+  @keyframes beatIn{ from{ opacity:0; transform:translateY(8px); } to{ opacity:1; transform:translateY(0); } }
+  @media (prefers-reduced-motion: reduce){ .beat-panel.active{ animation:none; } }
+
+  .beat-panel h2{ margin-bottom:8px; }
+  .subhead{ color:var(--muted); font-size:16px; max-width:56ch; margin-bottom:22px; }
+
+  /* presenter-only notes — hidden unless toggled */
+  .presenter-note{ display:none; margin-top:20px; }
+  .wrap.notes-on .presenter-note{ display:block; }
+  .presenter-note .pn-head{
+    display:flex; align-items:center; gap:8px; margin-bottom:10px;
+    font-family:'IBM Plex Mono',monospace; font-size:10.5px; color:var(--accent); text-transform:uppercase; letter-spacing:0.04em; font-weight:600;
+  }
+  .presenter-note .pn-head::before{ content:'●'; font-size:8px; }
+  .presenter-note .pn-time{ margin-left:auto; color:var(--muted); text-transform:none; letter-spacing:0; font-weight:500; }
+  .presenter-note .say{
+    font-family:'IBM Plex Sans Condensed', sans-serif; font-weight:600; font-size:16px; font-style:italic;
+    color:var(--ink); background:var(--accent-soft); border-left:3px solid var(--accent);
+    padding:12px 16px; border-radius:0 8px 8px 0; margin-bottom:10px;
+  }
+  .presenter-note .pn-staging{ font-size:12.5px; color:var(--muted); }
+
+  .nav-row{ display:flex; justify-content:space-between; align-items:center; padding:16px 24px 20px; border-top:1px solid var(--line); }
+  .nav-btn{
+    font-family:'IBM Plex Mono', monospace; font-size:13px; font-weight:600;
+    background:var(--surface-2); border:1px solid var(--line); color:var(--ink);
+    padding:9px 18px; border-radius:20px; cursor:pointer; transition:background 0.15s,border-color 0.15s;
+  }
+  .nav-btn:hover{ border-color:var(--accent); }
+  .nav-btn:disabled{ opacity:0.3; cursor:default; }
+  .nav-btn.primary{ background:var(--accent); color:#fff; border-color:var(--accent); }
+  .nav-count{ font-family:'IBM Plex Mono',monospace; font-size:12.5px; color:var(--muted); }
+
+  /* ---------- demo widgets ---------- */
+  .demo-box{ background:var(--bg); border:1px solid var(--line); border-radius:10px; padding:22px; }
+
+  .handoff{ display:flex; align-items:center; justify-content:center; gap:0; flex-wrap:wrap; padding:20px 10px; }
+  .handoff .hbox{ background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:16px 22px; text-align:center; min-width:170px; }
+  .handoff .hbox .ht{ font-family:'IBM Plex Mono',monospace; font-weight:600; font-size:13.5px; }
+  .handoff .hbox .hs{ font-size:11.5px; color:var(--muted); margin-top:3px; }
+  .handoff .hbox.accent{ border-color:var(--accent); }
+  .handoff .hbox.accent .ht{ color:var(--accent); }
+  .handoff .harrow{ width:100px; height:2px; background:var(--line); position:relative; margin:0 8px; overflow:visible; }
+  .handoff .harrow::after{ content:''; position:absolute; right:-1px; top:-4px; width:0;height:0; border-top:5px solid transparent; border-bottom:5px solid transparent; border-left:8px solid var(--line); }
+  .handoff .hdot{ position:absolute; top:-3px; left:0; width:8px; height:8px; border-radius:50%; background:var(--accent); animation:travel 2.4s ease-in-out infinite; }
+  @keyframes travel{ 0%{ left:0; opacity:0; } 10%{ opacity:1; } 90%{ opacity:1; } 100%{ left:calc(100% - 8px); opacity:0; } }
+  @media (prefers-reduced-motion: reduce){ .handoff .hdot{ animation:none; left:calc(50% - 4px); opacity:1; } }
+
+  .lc-strip{ display:flex; gap:7px; flex-wrap:wrap; justify-content:center; }
+  .lc-pill{
+    font-family:'IBM Plex Mono',monospace; font-size:12px; font-weight:500; color:var(--ink);
+    background:var(--surface); border:1px solid var(--line); border-radius:20px; padding:8px 14px;
+    opacity:0; transform:translateY(4px); animation:pillIn 0.4s ease forwards;
+  }
+  @keyframes pillIn{ to{ opacity:1; transform:translateY(0); } }
+  @media (prefers-reduced-motion: reduce){ .lc-pill{ animation:none; opacity:1; transform:none; } }
+
+  .qgrid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:14px; }
+  .qcard{
+    background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:18px;
+    opacity:0; transform:translateY(6px); animation:tileIn 0.45s ease forwards;
+  }
+  .qcard .qrole{ font-family:'IBM Plex Mono',monospace; font-size:11px; font-weight:600; color:var(--accent); text-transform:uppercase; letter-spacing:0.04em; margin-bottom:8px; }
+  .qcard .qtext{ font-family:'IBM Plex Sans Condensed',sans-serif; font-weight:600; font-size:16px; line-height:1.35; }
+  .q-link{
+    display:inline-block; margin-top:12px; font-family:'IBM Plex Mono',monospace; font-size:11.5px; font-weight:600;
+    color:var(--accent); background:none; border:none; padding:0; cursor:pointer;
+  }
+  .q-link:hover{ text-decoration:underline; }
+  .q-link:focus-visible{ outline:2px solid var(--accent); outline-offset:3px; }
+  .q-gap{ margin-top:12px; font-size:11.5px; color:var(--muted); font-style:italic; line-height:1.4; }
+  @media (prefers-reduced-motion: reduce){ .qcard{ animation:none; opacity:1; transform:none; } }
+
+  .excluded{ margin-top:16px; padding-top:14px; border-top:1px solid var(--line); }
+  .excluded .x-label{ font-family:'IBM Plex Mono',monospace; font-size:10.5px; color:var(--muted); text-transform:uppercase; letter-spacing:0.03em; margin-bottom:8px; }
+  .excluded .x-chips{ display:flex; gap:7px; flex-wrap:wrap; }
+  .x-chip{
+    font-family:'IBM Plex Mono',monospace; font-size:11.5px; color:var(--muted);
+    background:var(--surface); border:1px solid var(--line); border-radius:20px; padding:4px 11px;
+    text-decoration:line-through; text-decoration-color:var(--muted); text-decoration-thickness:1.5px;
+  }
+
+  .ceo-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:12px; margin-bottom:14px; }
+  .ceo-tile{
+    background:var(--surface); border:1px solid var(--line); border-radius:8px; padding:15px 17px;
+    opacity:0; transform:translateY(6px); animation:tileIn 0.45s ease forwards;
+  }
+  @keyframes tileIn{ to{ opacity:1; transform:translateY(0); } }
+  @media (prefers-reduced-motion: reduce){ .ceo-tile{ animation:none; opacity:1; transform:none; } }
+  .ceo-tile .label{ font-family:'IBM Plex Mono',monospace; font-size:10.5px; color:var(--muted); text-transform:uppercase; letter-spacing:0.03em; }
+  .ceo-tile .value{ font-family:'IBM Plex Mono',monospace; font-size:22px; font-weight:600; margin-top:5px; font-variant-numeric:tabular-nums; }
+  .ceo-tile .value.risk{ color:var(--risk); }
+  .ceo-tile .value.good{ color:var(--good); }
+  .ceo-tile .note2{ margin-top:3px; font-size:11.5px; color:var(--muted); }
+  .var-banner{ background:var(--risk-soft); border:1px solid var(--risk); border-radius:8px; padding:13px 16px; font-size:13.5px; color:var(--ink); opacity:0; animation:tileIn 0.45s ease forwards; animation-delay:0.5s; }
+  @media (prefers-reduced-motion: reduce){ .var-banner{ animation:none; opacity:1; } }
+
+  .role-tabs{ display:flex; gap:8px; flex-wrap:wrap; margin-bottom:18px; }
+  .role-tab{
+    font-family:'IBM Plex Mono', monospace; font-size:12.5px; font-weight:500;
+    background:var(--surface-2); border:1px solid var(--line); color:var(--muted);
+    padding:9px 16px; border-radius:20px; cursor:pointer; transition:background 0.15s,color 0.15s,border-color 0.15s;
+  }
+  .role-tab:hover{ border-color:var(--accent); }
+  .role-tab.active{ background:var(--accent); color:#fff; border-color:var(--accent); }
+  .role-tab:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
+  .source-tag{
+    font-family:'IBM Plex Mono', monospace; font-size:10px; font-weight:600; text-transform:uppercase;
+    letter-spacing:0.03em; padding:3px 9px; border-radius:20px; display:inline-block;
+    background:var(--surface-2); color:var(--muted);
+  }
+  .home-screen .hs-head{ display:flex; justify-content:space-between; align-items:baseline; margin-bottom:14px; flex-wrap:wrap; gap:8px; }
+  .home-screen .hs-title{ font-family:'IBM Plex Sans Condensed',sans-serif; font-weight:700; font-size:17px; }
+  .hs-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:10px; margin-bottom:12px; }
+  .hs-tile{ background:var(--surface); border:1px solid var(--line); border-radius:8px; padding:12px 14px; }
+  .hs-tile .label{ font-family:'IBM Plex Mono',monospace; font-size:10.5px; color:var(--muted); text-transform:uppercase; letter-spacing:0.03em; }
+  .hs-tile .value{ font-family:'IBM Plex Mono',monospace; font-size:18px; font-weight:600; margin-top:4px; font-variant-numeric:tabular-nums; }
+  .hs-tile .value.risk{ color:var(--risk); }
+  .hs-tile .value.good{ color:var(--good); }
+  .hs-tile .note2{ margin-top:3px; font-size:11px; color:var(--muted); }
+  .hs-list{ background:var(--surface); border:1px solid var(--line); border-radius:8px; padding:12px 14px; }
+  .hs-list .label{ font-family:'IBM Plex Mono',monospace; font-size:10.5px; color:var(--muted); text-transform:uppercase; letter-spacing:0.03em; margin-bottom:6px; }
+  .hs-list ul{ margin:0; padding-left:16px; font-size:12.5px; }
+  .hs-list li{ margin-bottom:4px; }
+
+  .breadcrumb{
+    display:flex; gap:6px; flex-wrap:wrap; align-items:center; background:var(--surface); border:1px solid var(--line);
+    border-radius:8px; padding:12px 16px; margin-bottom:16px; min-height:24px; font-family:'IBM Plex Mono',monospace; font-size:12.5px;
+  }
+  .breadcrumb .crumb{ color:var(--accent); font-weight:600; animation:pillIn 0.3s ease; }
+  .breadcrumb .sep{ color:var(--muted); }
+  .breadcrumb .empty{ color:var(--muted); }
+  .breadcrumb .persist{ margin-left:auto; color:var(--muted); font-size:11px; }
+  .drill-levels{ display:flex; gap:8px; flex-wrap:wrap; margin-bottom:14px; }
+  .drill-btn{
+    font-family:'IBM Plex Mono', monospace; font-size:12.5px; font-weight:500;
+    background:var(--surface-2); border:1px solid var(--line); color:var(--muted);
+    padding:9px 14px; border-radius:20px; cursor:pointer; transition:background 0.15s,color 0.15s,border-color 0.15s;
+  }
+  .drill-btn:hover{ border-color:var(--accent); }
+  .drill-btn.active{ background:var(--accent); color:#fff; border-color:var(--accent); }
+  .drill-readout .rtitle{ font-family:'IBM Plex Mono',monospace; font-weight:600; font-size:12.5px; color:var(--accent); text-transform:uppercase; letter-spacing:0.03em; }
+  .drill-readout .rdesc{ margin-top:6px; font-size:13.5px; }
+
+  .locklive{ display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+  .locklive .col{ border-radius:10px; padding:16px 18px; border:1px solid var(--line); }
+  .locklive .col.live{ background:var(--web-soft); }
+  .locklive .col.locked{ background:var(--accent-soft); }
+  .locklive h3{ display:flex; align-items:center; gap:7px; }
+  .pulse-dot{ width:8px; height:8px; border-radius:50%; background:var(--web); animation:dotpulse 1.6s ease-in-out infinite; }
+  @keyframes dotpulse{ 0%,100%{ opacity:1; transform:scale(1); } 50%{ opacity:0.4; transform:scale(0.7); } }
+  @media (prefers-reduced-motion: reduce){ .pulse-dot{ animation:none; } }
+  .locklive ul{ margin:10px 0 0; padding-left:18px; font-size:13px; }
+  .locklive li{ margin-bottom:5px; }
+
+  .close-line{ text-align:center; padding:34px 10px; }
+  .close-line .big{ font-family:'IBM Plex Sans Condensed',sans-serif; font-weight:700; font-size:clamp(26px,4.2vw,34px); line-height:1.3; opacity:0; animation:tileIn 0.6s ease forwards; }
+  .close-line .big + .big{ animation-delay:0.3s; color:var(--accent); }
+  @media (prefers-reduced-motion: reduce){ .close-line .big{ animation:none; opacity:1; } }
+
+  /* ---------- appendix ---------- */
+  details.reference{ margin-top:32px; border:1px solid var(--line); border-radius:10px; background:var(--surface); overflow:hidden; }
+  details.reference summary{
+    cursor:pointer; list-style:none; padding:16px 20px; font-family:'IBM Plex Mono',monospace;
+    font-size:13px; font-weight:600; color:var(--muted); display:flex; align-items:center; justify-content:space-between;
+  }
+  details.reference summary::-webkit-details-marker{ display:none; }
+  details.reference summary::after{ content:'+'; font-size:18px; color:var(--accent); }
+  details.reference[open] summary::after{ content:'–'; }
+  .ref-body{ padding:4px 20px 24px; border-top:1px solid var(--line); }
+  .ref-body h3{ margin:20px 0 10px; font-size:14px; }
+  .ref-body h3:first-child{ margin-top:16px; }
+
+  .scope{ display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+  .scope-col{ border-radius:10px; padding:16px; border:1px solid var(--line); font-size:13px; }
+  .scope-col.mine{ background:var(--web-soft); }
+  .scope-col.theirs{ background:var(--surface-2); }
+  .scope-col ul{ margin:8px 0 0; padding-left:16px; }
+  .scope-col li{ margin-bottom:5px; }
+
+  .ref-table{ overflow-x:auto; border:1px solid var(--line); border-radius:10px; }
+  table{ width:100%; border-collapse:collapse; font-size:13px; background:var(--surface); }
+  thead th{ text-align:left; font-family:'IBM Plex Mono',monospace; font-size:10.5px; text-transform:uppercase; letter-spacing:0.04em; color:var(--muted); font-weight:600; padding:10px 12px; border-bottom:1px solid var(--line); background:var(--surface-2); }
+  tbody td{ padding:10px 12px; border-bottom:1px solid var(--line); vertical-align:top; }
+  tbody tr:last-child td{ border-bottom:none; }
+  .pill{ font-family:'IBM Plex Mono',monospace; font-size:10.5px; font-weight:600; padding:3px 8px; border-radius:20px; display:inline-block; white-space:nowrap; }
+  .pill.web{ background:var(--web-soft); color:var(--web); }
+  .pill.mobile{ background:var(--surface-2); color:var(--muted); }
+
+  .lc-track{ display:flex; gap:6px; flex-wrap:wrap; margin:14px 0 14px; }
+  .lc-btn{
+    font-family:'IBM Plex Mono', monospace; font-size:11.5px; font-weight:500;
+    background:var(--surface-2); border:1px solid var(--line); color:var(--muted);
+    padding:7px 12px; border-radius:20px; cursor:pointer; white-space:nowrap;
+  }
+  .lc-btn.active{ background:var(--accent); color:#fff; border-color:var(--accent); }
+  .lc-btn.thin{ border-style:dashed; }
+  .lc-btn{ opacity:0; transform:translateY(4px); animation:pillIn 0.35s ease forwards; }
+  @media (prefers-reduced-motion: reduce){ .lc-btn{ animation:none; opacity:1; transform:none; } }
+  .lc-panel{ background:var(--bg); border:1px solid var(--line); border-radius:10px; padding:16px 18px; }
+  .pg-note{
+    margin-top:14px; font-size:12.5px; color:var(--muted); background:var(--accent-soft);
+    border-left:3px solid var(--accent); padding:10px 14px; border-radius:0 8px 8px 0;
+  }
+  .pg-note strong{ color:var(--ink); }
+  .lc-panel .lc-head{ display:flex; align-items:baseline; justify-content:space-between; gap:10px; flex-wrap:wrap; margin-bottom:8px; }
+  .lc-panel .lc-title{ font-family:'IBM Plex Sans Condensed',sans-serif; font-weight:700; font-size:16px; }
+  .lc-panel .lc-role{ font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--accent); background:var(--accent-soft); padding:3px 9px; border-radius:20px; font-weight:600; white-space:nowrap; }
+  .surf-tag{ font-family:'IBM Plex Mono',monospace; font-size:10px; font-weight:600; text-transform:uppercase; letter-spacing:0.03em; padding:3px 9px; border-radius:20px; white-space:nowrap; }
+  .surf-tag.web{ background:var(--web-soft); color:var(--web); }
+  .surf-tag.mobile{ background:var(--surface-2); color:var(--muted); }
+  .surf-tag.system{ background:var(--good-soft); color:var(--good); }
+  .surf-tag.informal, .surf-tag.unspecified{ background:var(--surface-2); color:var(--muted); font-style:italic; text-transform:none; }
+  .lc-panel .lc-desc{ font-size:13.5px; }
+  .lc-panel .lc-feeds{ margin-top:10px; padding-top:10px; border-top:1px solid var(--line); font-size:12px; color:var(--muted); font-family:'IBM Plex Mono',monospace; }
+
+  .pn-footer{ display:none; margin-top:28px; font-size:12px; color:var(--muted); font-family:'IBM Plex Mono', monospace; max-width:64ch; }
+  .wrap.notes-on .pn-footer{ display:block; }
+
+  @media (max-width:640px){
+    .scope{ grid-template-columns:1fr; }
+    .locklive{ grid-template-columns:1fr; }
+    .wrap{ padding:0 14px 60px; }
+    header.hero{ padding:36px 0 24px; }
+    .stage{ padding:20px 16px 24px; min-height:0; }
+    .presenter-top{ padding:14px 16px 0; gap:10px; }
+    .beat-nav{ padding:12px 10px 0; gap:2px; }
+    .beat-dot{ font-size:13px; padding:7px 2px 12px; }
+    .nav-row{ padding:14px 16px 16px; }
+    .nav-btn{ padding:8px 12px; font-size:12px; }
+    .demo-box{ padding:14px; }
+    .ceo-grid, .hs-grid{ grid-template-columns:repeat(auto-fit,minmax(128px,1fr)); }
+    .handoff{ gap:10px; padding:12px 0; }
+    .handoff .hbox{ min-width:0; flex:1 1 130px; padding:14px 12px; }
+    .harrow{ width:36px; }
+  }
+  @media (max-width:380px){
+    h1{ font-size:26px; }
+    .notes-toggle{ font-size:9.5px; padding:4px 8px 4px 6px; }
+    .nav-count{ font-size:11px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap" id="wrap">
+
+  <header class="hero">
+    <span class="eyebrow">SIGNAL · Praxis Pilot MVP</span>
+    <h1>Proving value, end to end</h1>
+    <p class="lede">Nine stages. Four roles. One number everyone can trust.</p>
+  </header>
+
+  <div class="presenter">
+    <div class="presenter-top">
+      <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+      <button class="notes-toggle" id="notes-toggle" type="button" aria-pressed="false">
+        <span class="dot"></span> Notes
+      </button>
+    </div>
+    <div class="beat-nav" id="beat-nav">
+      <div class="beat-indicator" id="beat-indicator"></div>
+    </div>
+
+    <div class="stage">
+
+      <div class="beat-panel active" data-beat="0">
+        <h2>One principle, every screen</h2>
+        <div class="subhead">Every client renders. None of them decide.</div>
+        <div class="demo-box">
+          <div class="handoff">
+            <div class="hbox"><div class="ht">Web · Mobile · Imports</div><div class="hs">thin clients — no rules</div></div>
+            <div class="harrow"><div class="hdot"></div></div>
+            <div class="hbox accent"><div class="ht">One API</div><div class="hs">all calculation &amp; authority</div></div>
+          </div>
+        </div>
+        <div class="presenter-note">
+          <div class="pn-head">Cue <span class="pn-time">0:00–0:30 · 5-min: 0:00–0:15</span></div>
+          <div class="say">"Every screen you're about to see — web, mobile, even the SAP import — follows one rule: it renders what the API sends it. It never calculates or decides anything itself."</div>
+          <div class="pn-staging">If you're going straight on from the Aldor demo, bridge verbally first: "same rule as what you just saw." This page itself stays SIGNAL-only — no Aldor reference on screen.</div>
+        </div>
+      </div>
+
+      <div class="beat-panel" data-beat="1">
+        <h2>Four questions, one system</h2>
+        <div class="subhead">Every executive asks something different. SIGNAL is built to answer all four from one set of numbers.</div>
+        <div class="demo-box">
+          <div class="qgrid" id="qgrid"></div>
+        </div>
+        <div class="presenter-note">
+          <div class="pn-head">Cue <span class="pn-time">supporting beat — fold into the framing line</span></div>
+          <div class="pn-staging">This is slide 3's actual thesis. Use it if asked "why does this need four screens instead of one" — the answer is these four questions genuinely don't share an answer.</div>
+        </div>
+      </div>
+
+      <div class="beat-panel" data-beat="2">
+        <h2>One app, two threads</h2>
+        <div class="subhead">A lifecycle that writes the truth. Four screens that read it. Click each stage.</div>
+        <div class="demo-box">
+          <div class="lc-track" id="lc-track"></div>
+          <div class="lc-panel" id="lc-panel"></div>
+          <div class="pg-note">
+            <strong>Gates run PG0 → PG5</strong> — six levels, not five. PG0 still counts, at 25%. And Gates are only stage 3 of these 9 — not the whole lifecycle on their own.
+          </div>
+        </div>
+        <div class="presenter-note">
+          <div class="pn-head">Cue <span class="pn-time">0:30–3:00 · 5-min: 0:15–0:45</span></div>
+          <div class="say">"SIGNAL tracks every promised value outcome from first idea to proven, banked result, and makes sure the number on an executive's screen is something they can trust."</div>
+          <div class="pn-staging">Click through fast — you're establishing there's a real spine underneath, not teaching each stage. Under 5 minutes: click 3–4 stages max, let the rest ride on the sentence.</div>
+        </div>
+      </div>
+
+      <div class="beat-panel" data-beat="3">
+        <h2>What a CEO sees at 7:55am</h2>
+        <div class="subhead">Target, forecast, delivered — and exactly what needs you today.</div>
+        <div class="demo-box">
+          <div class="ceo-grid" id="ceo-grid"></div>
+          <div class="var-banner" id="var-banner"></div>
+        </div>
+        <div class="presenter-note">
+          <div class="pn-head">Cue <span class="pn-time">3:00–7:00 · 5-min: 0:45–2:15</span></div>
+          <div class="say">Walk it in order: Target → MAPV → Forecast → Delivered → the Value-at-Risk line.</div>
+          <div class="pn-staging">Your strongest ground — real deck numbers (slide 11). Keep this close to full length even under time pressure.</div>
+        </div>
+      </div>
+
+      <div class="beat-panel" data-beat="4">
+        <h2>One dataset. Four lenses.</h2>
+        <div class="subhead">Every role sees the same truth, shaped around their one question — never the same screen twice.</div>
+        <div class="demo-box">
+          <div class="role-tabs" id="role-tabs"></div>
+          <div id="role-content"></div>
+        </div>
+        <div class="presenter-note">
+          <div class="pn-head">Cue <span class="pn-time">7:00–10:00 · 5-min: 2:15–3:15</span></div>
+          <div class="say">"The field list is confirmed, the exact layout isn't."</div>
+          <div class="pn-staging">Click CFO, Owner, Finance in turn. Under 5 minutes: click CFO only, state the claim verbally instead of cycling all three.</div>
+        </div>
+      </div>
+
+      <div class="beat-panel" data-beat="5">
+        <h2>Four clicks deep. Still know where you are.</h2>
+        <div class="subhead">Context never resets — and this is the bridge back to the lifecycle you just saw.</div>
+        <div class="demo-box">
+          <div class="breadcrumb" id="breadcrumb">
+            <span class="empty">— nothing selected yet —</span>
+            <span class="persist">scope: Enterprise · period: FY2027</span>
+          </div>
+          <div class="drill-levels" id="drill-levels"></div>
+          <div class="drill-readout" id="drill-readout">
+            <div class="rtitle">Start here</div>
+            <div class="rdesc">Click "1. Portfolio" to begin.</div>
+          </div>
+        </div>
+        <div class="presenter-note">
+          <div class="pn-head">Cue <span class="pn-time">10:00–12:30 · 5-min: 3:15–4:15</span></div>
+          <div class="say">"Watch the breadcrumb."</div>
+          <div class="pn-staging">Click all 4 levels fast, minimal narration — the breadcrumb holding is the proof, not the talking.</div>
+        </div>
+      </div>
+
+      <div class="beat-panel" data-beat="6">
+        <h2>What never moves</h2>
+        <div class="subhead">Forecasts shift daily. Commitments don't.</div>
+        <div class="demo-box">
+          <div class="locklive">
+            <div class="col live">
+              <h3><span class="pulse-dot"></span> Changes constantly</h3>
+              <ul><li>Delivery progress</li><li>Latest Forecast</li></ul>
+            </div>
+            <div class="col locked">
+              <h3>🔒 Locked, once set</h3>
+              <ul><li>Original Commitment (frozen at PG4)</li><li>Gate history</li></ul>
+            </div>
+          </div>
+        </div>
+        <div class="presenter-note">
+          <div class="pn-head">Cue <span class="pn-time">12:30–14:00 · 5-min: 4:15–4:45</span></div>
+          <div class="say">"Delivery and Forecast move constantly; Commitment and Gate history never do, once locked. That line is what Eseigbe's about to defend in detail."</div>
+          <div class="pn-staging">One or two sentences, then stop — you're opening the door to Section D, not walking through it. Don't drop this beat even under time pressure.</div>
+        </div>
+      </div>
+
+      <div class="beat-panel" data-beat="7">
+        <div class="demo-box">
+          <div class="close-line">
+            <div class="big">Sophisticated underneath.</div>
+            <div class="big">Simple on screen.</div>
+          </div>
+        </div>
+        <div class="presenter-note">
+          <div class="pn-head">Cue <span class="pn-time">14:00–15:00 · 5-min: 4:45–5:00</span></div>
+          <div class="pn-staging">The deck's own closing line (slide 31) — bookends your section with the thing the client will remember after two hours.</div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="nav-row">
+      <button class="nav-btn" id="btn-prev" type="button">← Prev</button>
+      <span class="nav-count" id="nav-count">1 / 7</span>
+      <button class="nav-btn primary" id="btn-next" type="button">Next →</button>
+    </div>
+  </div>
+
+  <div class="presenter-note pn-footer-wrap">
+    <div class="pn-footer" style="display:block;">
+      <strong style="color:var(--risk);">Don't say:</strong> "I've reviewed the prototype" unless you have — say "the field list is confirmed, the detailed design is in progress" instead. Don't present CFO/Owner/Finance numbers as real — they're placeholder structure. Don't defend immutability/Gate/Banking mechanics in depth — that's Eseigbe's territory, point at it, don't own it.
+    </div>
+  </div>
+
+  <header style="margin:48px 0 4px;">
+    <span class="eyebrow">The rest of the deck</span>
+    <h2>Everything else about SIGNAL</h2>
+    <p class="lede">Sections C is what you present. D through H below are other people's sections — Eseigbe, Owolabi, Promise — but worth knowing cold so nothing in Tuesday's room catches you off guard. Expand whichever you want to study.</p>
+  </header>
+
+  <details class="reference">
+    <summary>C — Your scope, full lifecycle detail, platform split</summary>
+    <div class="ref-body">
+      <h3>Web vs. mobile ownership</h3>
+      <div class="scope">
+        <div class="scope-col mine">
+          <strong>Web — this build</strong>
+          <ul>
+            <li>All four role HOME screens</li>
+            <li>The drill-down, with persistent context</li>
+            <li>Run Review, Gap Closure, Value Case/Gate submissions</li>
+            <li>Finance assurance workbench, imports, admin, reports</li>
+          </ul>
+        </div>
+        <div class="scope-col theirs">
+          <strong>Mobile — companion app</strong>
+          <ul>
+            <li>My Actions — one ranked inbox</li>
+            <li>Approvals with step-up confirm</li>
+            <li>Quick Update, Blockers &amp; Help, Evidence capture</li>
+          </ul>
+        </div>
+      </div>
+
+      <h3>Where dense work happens</h3>
+      <div class="ref-table">
+        <table>
+          <thead><tr><th>Work</th><th>Surface</th><th>Why</th></tr></thead>
+          <tbody>
+            <tr><td>My Actions, approvals, Quick Update, evidence capture</td><td><span class="pill mobile">mobile</span></td><td>Short, action-shaped, needs to reach you anywhere</td></tr>
+            <tr><td>Role HOME screens + drill-down</td><td><span class="pill web">web</span></td><td>Comparative, needs room to show context at a glance</td></tr>
+            <tr><td>Run Review, Gap Closure, Value Case/Gate submission</td><td><span class="pill web">web</span></td><td>Dense, comparative work needs a large screen</td></tr>
+            <tr><td>Finance workbench, imports/reconciliation</td><td><span class="pill web">web</span></td><td>Multi-row, cross-referencing work</td></tr>
+            <tr><td>Admin/config, portfolio reports</td><td><span class="pill web">web</span></td><td>Infrequent, detailed, not time-critical</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Your slides</h3>
+      <div class="ref-table">
+        <table>
+          <thead><tr><th>Slide</th><th>What it says</th></tr></thead>
+          <tbody>
+            <tr><td>2</td><td>Agenda — you're on Section C, "SIGNAL product and executive view" (with Opeyemi), 15 min</td></tr>
+            <tr><td>5</td><td>Team roster — Frontend Lead, web application and role HOME screens, 100%, W2–W17</td></tr>
+            <tr><td>6</td><td>Ownership — you own Frontend/web; you're deputy for Mobile (owner: Nwakwue)</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p style="margin-top:12px; font-size:12.5px; color:var(--muted);">This page itself is built from slides 3, 10–13, 16, 18 and 20 — the lifecycle, the role screens, and the immutability rules. Slides 2, 5, and 6 are only where you're named; they don't describe the product.</p>
+    </div>
+  </details>
+
+  <details class="reference">
+    <summary>D — Architecture &amp; data control (slides 15–17)</summary>
+    <div class="ref-body">
+      <h3>One codebase, isolated per client</h3>
+      <p class="lede">Web, mobile, and SAP/file imports are all "thin clients" — no rules, no authority decisions live in any of them. Each client gets its own environment; nothing is shared between clients but the container image.</p>
+      <ul style="margin:12px 0 0; padding-left:20px; font-size:13.5px;">
+        <li>API: a modular monolith (NestJS/TypeScript) with an authority policy engine checking role × scope × authority × materiality × delegation on every request.</li>
+        <li>A separate calculation engine — pure, versioned, exact-decimal math.</li>
+        <li>One PostgreSQL database per client: current state, append-only ledgers, Gate/Review snapshots, config versions, a hash-chained audit log.</li>
+        <li>Background workers for imports, reports, ageing, escalation, delegation expiry.</li>
+        <li>Evidence in its own S3 bucket with its own KMS key, malware-scanned.</li>
+      </ul>
+
+      <h3>What changes vs. what never can (slide 16)</h3>
+      <div class="locklive" style="margin-top:14px;">
+        <div class="col live">
+          <h3 style="margin:0;"><span class="pulse-dot"></span> Versioned, changes</h3>
+          <ul><li>Opportunity / Draft</li><li>Initiative details, Control State</li><li>Latest Forecast</li><li>Decisions, Commitments, Blockers</li><li>Evidence</li></ul>
+        </div>
+        <div class="col locked">
+          <h3 style="margin:0;">🔒 Immutable once written</h3>
+          <ul><li>Gate decisions &amp; snapshots</li><li>Original Commitment (frozen at PG4)</li><li>Value claims, Finance decisions</li><li>Delivery &amp; Banking Ledgers</li><li>Review Snapshots, Calculation Context</li></ul>
+        </div>
+      </div>
+      <p class="lede" style="margin-top:12px;">Corrections never overwrite — they're new, linked records (Value Adjustment, Banking Adjustment, Review Addendum, Resubmission). Enforced at the database level: the app's own role has no UPDATE/DELETE on immutable tables, triggers reject any attempt, and the audit log is hash-chained.</p>
+
+      <h3>Reproducing March's number in September (slide 17)</h3>
+      <p class="lede">Closing a review writes an immutable snapshot of the values <em>and</em> the full calculation context used to produce them — gate factors, FX rates, structure, engine version, as-of time. Every later migration has to re-run that exact calculation and match it to the cent, or the migration fails (AT-17).</p>
+    </div>
+  </details>
+
+  <details class="reference">
+    <summary>E — Value-control scenarios (slides 18–20)</summary>
+    <div class="ref-body">
+      <p class="lede">Four worked examples the deck uses to prove the controls hold under real numbers.</p>
+      <h3>1. Partial validation</h3>
+      <p class="lede">A $700k claim, Finance validates $620k. Delivered rises by exactly $620k — the $80k gap doesn't vanish, it ages in a queue until new evidence justifies a new tranche. Tranches can never exceed the original claim (a database constraint).</p>
+      <h3>2. MAPV — Maturity-Adjusted Portfolio Value</h3>
+      <p class="lede">Formula: Validated Delivered + (Gate factor × eligible remaining value). Worked example: $3.0m + 83.3% × $7.0m = $8.83m. Challenged or unsupported remaining value counts as zero until re-assured — never discounted twice.</p>
+      <h3>3. A challenged PG4 initiative</h3>
+      <p class="lede">The Gate stays at PG4 — history is never rewritten — but a separate Control State flips to "Re-assurance Required." The Original Commitment stays frozen; only the Forecast moves, opening a Value-at-Risk gap. In the worked example, MAPV drops from $7.58m to $5.92m to reflect the challenge.</p>
+      <h3>4. Banking and delegated authority</h3>
+      <p class="lede">Delivered → Finance-validated → (CFO certified, above a materiality threshold) → Banked. The person who validates a value can never also bank it (segregation of duties). A CFO can delegate banking up to a ceiling — e.g. $2m — to a Finance Director; anything above that ceiling always stays with the CFO, it never falls through to the delegate.</p>
+    </div>
+  </details>
+
+  <details class="reference">
+    <summary>F — Security &amp; resilience (slides 21–22)</summary>
+    <div class="ref-body">
+      <h3>Client isolation</h3>
+      <p class="lede">A compromise of one client's environment — app, database, evidence bucket, encryption keys, logs, backups — has no network route to any other client's. Fully separate per client.</p>
+      <h3>Identity &amp; access</h3>
+      <ul style="margin:10px 0 0; padding-left:20px; font-size:13.5px;">
+        <li>MFA required for privileged roles; SSO-ready (OIDC/SAML); step-up re-authentication for material actions</li>
+        <li>A sealed, alerted break-glass account for emergencies</li>
+        <li>No standing production access — just-in-time, approved, time-boxed, logged, Praxis notified, auto-revoked</li>
+      </ul>
+      <h3>Release pipeline &amp; backups</h3>
+      <ul style="margin:10px 0 0; padding-left:20px; font-size:13.5px;">
+        <li>Every change: second reviewer, automated SAST/dependency/secret scans, staging with dynamic scanning, manual approval before production</li>
+        <li>Point-in-time recovery (RPO in minutes), restore target of 8 hours (RTO)</li>
+        <li>Daily encrypted snapshots copied to a second region; restore proven before go-live, then quarterly</li>
+      </ul>
+    </div>
+  </details>
+
+  <details class="reference">
+    <summary>G — Delivery, scale &amp; costs (slides 24–28)</summary>
+    <div class="ref-body">
+      <h3>Timeline</h3>
+      <p class="lede">18 weeks including a contingency week, with the first end-to-end flow demoed by week 9.</p>
+      <h3>One product, many clients</h3>
+      <p class="lede">One codebase, one release train — every client upgrades the same way. A client request becomes configuration, a product enhancement for everyone, or an integration adapter — never a custom one-off fork. SAP stays read-only: data imports through a validate → preview → reconcile → confirm pipeline, never written back, and imported data still has to pass the normal validation workflow before it counts as Finance-validated or Banked.</p>
+      <h3>Costs</h3>
+      <p class="lede">Roughly ₦280k per production client plus a shared staging environment — costs scale close to linearly with the number of clients, not with added complexity.</p>
+      <h3>Testing discipline</h3>
+      <p class="lede">Calculation, permission, and immutability tests run on every single build. The team would delay launch for any of: cross-client data exposure, the possibility of double-banking, an alterable "immutable" record, a bypassable authority check, or an unproven restore.</p>
+    </div>
+  </details>
+
+  <details class="reference">
+    <summary>H — Ownership &amp; handover (slides 29–30)</summary>
+    <div class="ref-body">
+      <p class="lede">Praxis owns everything from day one — source code, cloud accounts, databases, encryption keys, CI/CD, mobile store accounts, SSO config, monitoring, backups. Nothing is held hostage by the vendor.</p>
+      <p class="lede" style="margin-top:10px;">If Auracule left tomorrow: Praxis revokes access and rotates secrets, a new team reads the runbooks and architecture decision records, runs a rehearsed deploy-and-restore, and releases through the same pipeline.</p>
+      <h3>What's needed from Praxis, and when</h3>
+      <p class="lede">Things like the signed SOW and GitHub/AWS accounts before week 1, the Authority Matrix by week 2, SSO provider details by week 8, pilot UAT users by weeks 15–16 — most marked critical-path, meaning a delay here delays the whole project day-for-day.</p>
+    </div>
+  </details>
+
+</div>
+
+<script>
+  const panels = Array.from(document.querySelectorAll('.beat-panel'));
+  const navEl = document.getElementById('beat-nav');
+  const indicatorEl = document.getElementById('beat-indicator');
+  const progressFillEl = document.getElementById('progress-fill');
+  const navCountEl = document.getElementById('nav-count');
+  const btnPrev = document.getElementById('btn-prev');
+  const btnNext = document.getElementById('btn-next');
+  const wrapEl = document.getElementById('wrap');
+  const notesToggle = document.getElementById('notes-toggle');
+  let current = 0;
+
+  panels.forEach((p, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'beat-dot';
+    btn.type = 'button';
+    btn.textContent = (i + 1);
+    btn.addEventListener('click', () => goTo(i));
+    navEl.appendChild(btn);
+  });
+
+  function moveIndicator() {
+    const dots = navEl.querySelectorAll('.beat-dot');
+    const d = dots[current];
+    if (!d) return;
+    indicatorEl.style.left = d.offsetLeft + 'px';
+    indicatorEl.style.width = d.offsetWidth + 'px';
+  }
+
+  function goTo(i) {
+    current = Math.max(0, Math.min(panels.length - 1, i));
+    panels.forEach((p, idx) => p.classList.toggle('active', idx === current));
+    navEl.querySelectorAll('.beat-dot').forEach((d, idx) => d.classList.toggle('active', idx === current));
+    progressFillEl.style.width = (current / (panels.length - 1) * 100) + '%';
+    navCountEl.textContent = (current + 1) + ' / ' + panels.length;
+    btnPrev.disabled = current === 0;
+    btnNext.disabled = current === panels.length - 1;
+    moveIndicator();
+    retriggerAnimations(current);
+  }
+
+  function retriggerAnimations(i) {
+    panels[i].querySelectorAll('.lc-pill, .lc-btn, .ceo-tile, .var-banner, .big, .qcard').forEach(el => {
+      el.style.animation = 'none';
+      void el.offsetHeight;
+      el.style.animation = '';
+    });
+  }
+
+  btnPrev.addEventListener('click', () => goTo(current - 1));
+  btnNext.addEventListener('click', () => goTo(current + 1));
+  window.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight') goTo(current + 1);
+    if (e.key === 'ArrowLeft') goTo(current - 1);
+  });
+  window.addEventListener('resize', moveIndicator);
+
+  notesToggle.addEventListener('click', () => {
+    const on = wrapEl.classList.toggle('notes-on');
+    notesToggle.setAttribute('aria-pressed', on ? 'true' : 'false');
+  });
+
+  /* beat 2: four questions, each linked to where it gets answered */
+  const questions = [
+    { role: 'CEO', q: 'Will we hit the target, what changed, what needs me?', beat: 3 },
+    { role: 'CFO', q: 'Can we trust the value — what’s validated, banked, at risk?', beat: 4, roleIdx: 1 },
+    { role: 'Sponsor', q: 'Is my workstream covered, what must happen by next review?', gap: 'No dedicated HOME screen for this role in the deck (slide 12 lists CEO, CFO, Owner, Finance — not Sponsor).' },
+    { role: 'Owner / Finance', q: 'What must I update, evidence, validate or escalate now?', beat: 4, roleIdx: 2 },
+  ];
+  const qgridEl = document.getElementById('qgrid');
+  questions.forEach((item, i) => {
+    const div = document.createElement('div');
+    div.className = 'qcard';
+    div.style.animationDelay = (i * 0.1) + 's';
+    const linkHtml = item.beat !== undefined
+      ? '<button class="q-link" type="button">See it answered →</button>'
+      : '<div class="q-gap">' + item.gap + '</div>';
+    div.innerHTML = '<div class="qrole">' + item.role + '</div><div class="qtext">' + item.q + '</div>' + linkHtml;
+    if (item.beat !== undefined) {
+      div.querySelector('.q-link').addEventListener('click', () => {
+        goTo(item.beat);
+        if (item.roleIdx !== undefined) renderRole(item.roleIdx);
+      });
+    }
+    qgridEl.appendChild(div);
+  });
+
+  /* beat 3: CEO-only tiles */
+  const ceoTiles = [
+    { label: 'Enterprise Target', value: '$50m', delay: 0 },
+    { label: 'Delivered Value Target (MAPV)', value: '$47m', note: '94% coverage · $3m gap', delay: 0.12 },
+    { label: 'Forecast', value: '$44m', note: '$6m below target', cls: 'risk', delay: 0.24 },
+    { label: 'Delivered', value: '$31m', note: 'Finance-validated', cls: 'good', delay: 0.36 },
+  ];
+  const ceoGridEl = document.getElementById('ceo-grid');
+  ceoTiles.forEach(t => {
+    const div = document.createElement('div');
+    div.className = 'ceo-tile';
+    div.style.animationDelay = t.delay + 's';
+    div.innerHTML = '<div class="label">' + t.label + '</div><div class="value' + (t.cls ? ' ' + t.cls : '') + '">' + t.value + '</div>' + (t.note ? '<div class="note2">' + t.note + '</div>' : '');
+    ceoGridEl.appendChild(div);
+  });
+  document.getElementById('var-banner').innerHTML = 'Value at Risk · 4 material exceptions · 3 decisions need you — Bank $6.5m (CFO certified) · Tender authority, 12 days waiting · Supply Chain $3m gap';
+
+  /* beat 4: role switch */
+  const roles = [
+    { id: 'ceo', label: 'CEO', tag: 'FY2027', title: 'Your Execution Day · FY2027',
+      tiles: [
+        { label: 'Enterprise Target', value: '$50m' },
+        { label: 'Delivered Value Target (MAPV)', value: '$47m', note: '94% coverage · $3m gap' },
+        { label: 'Forecast', value: '$44m', note: '$6m below target', cls: 'risk' },
+        { label: 'Delivered', value: '$31m', note: 'Finance-validated', cls: 'good' },
+      ],
+      lists: [
+        { label: 'Since last review', items: ['MAPV ↓ $2.4m', 'Forecast ↓ $1.0m', 'Delivered +$2.1m', '3 new Blockers'] },
+        { label: 'Needs your action', items: ['Bank $6.5m (CFO certified)', 'Tender authority — 12 days waiting', 'Supply Chain $3m gap'] },
+      ]
+    },
+    { id: 'cfo', label: 'CFO', tag: 'illustrative', title: 'Value trust position',
+      tiles: [
+        { label: 'Original Commitment', value: '$38m' },
+        { label: 'Latest Forecast', value: '$44m' },
+        { label: 'Challenged value', value: '$2.0m', cls: 'risk' },
+        { label: 'Banked', value: '$6.5m', cls: 'good' },
+      ],
+      lists: [
+        { label: 'Delivered → Validated → Certified → Banked', items: ['Delivered $31m', 'Finance-validated $28m', 'CFO-certified $9m', 'Banked $6.5m'] },
+        { label: 'Needs Finance action', items: ['3 adjustments awaiting certification', '1 disputed claim pending review'] },
+      ]
+    },
+    { id: 'owner', label: 'Initiative Owner', tag: 'illustrative', title: 'My workstream',
+      tiles: [
+        { label: 'Commitments due', value: '2' },
+        { label: 'Late actions', value: '1', cls: 'risk' },
+      ],
+      lists: [
+        { label: 'One dominant next action', items: ['Submit Gate evidence for "Supply Chain Consolidation" — due in 3 days'] },
+        { label: 'Blockers & help required', items: ['Vendor data access still pending IT'] },
+      ]
+    },
+    { id: 'finance', label: 'Finance', tag: 'illustrative', title: 'Returns & evidence',
+      tiles: [
+        { label: 'Outstanding evidence', value: '4' },
+        { label: 'Two-minute Quick Updates due', value: '7' },
+      ],
+      lists: [
+        { label: 'Returns awaiting action', items: ['Validate "Regional Rollout" claim — $620k', 'Reconcile import batch #214'] },
+      ]
+    },
+  ];
+  const EXCLUDED = ['Manual RAG ratings', 'Full initiative lists', 'Raw ledger rows', 'Configuration & methodology', 'Stable, unchanged data'];
+  const tabsEl = document.getElementById('role-tabs');
+  const contentEl = document.getElementById('role-content');
+  function renderRole(i) {
+    const r = roles[i];
+    Array.from(tabsEl.children).forEach((b, idx) => b.classList.toggle('active', idx === i));
+    const tilesHtml = r.tiles.map(t => '<div class="hs-tile"><div class="label">' + t.label + '</div><div class="value' + (t.cls ? ' ' + t.cls : '') + '">' + t.value + '</div>' + (t.note ? '<div class="note2">' + t.note + '</div>' : '') + '</div>').join('');
+    const listsHtml = r.lists.map(l => '<div class="hs-list"><div class="label">' + l.label + '</div><ul>' + l.items.map(it => '<li>' + it + '</li>').join('') + '</ul></div>').join('');
+    const excludedHtml = EXCLUDED.map(e => '<span class="x-chip">' + e + '</span>').join('');
+    contentEl.innerHTML =
+      '<div class="home-screen"><div class="hs-head"><span class="hs-title">' + r.title + '</span><span class="source-tag">' + r.tag + '</span></div>' +
+      '<div class="hs-grid">' + tilesHtml + '</div>' +
+      '<div class="hs-grid" style="grid-template-columns:repeat(auto-fit,minmax(200px,1fr));">' + listsHtml + '</div>' +
+      '<div class="excluded"><div class="x-label">Same, no matter the role — never shown here</div><div class="x-chips">' + excludedHtml + '</div></div></div>';
+  }
+  roles.forEach((r, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'role-tab'; btn.type = 'button'; btn.textContent = r.label;
+    btn.addEventListener('click', () => renderRole(i));
+    tabsEl.appendChild(btn);
+  });
+  renderRole(0);
+
+  /* beat 5: drill-down */
+  const levels = [
+    { id: 1, label: '1. Portfolio', crumb: 'Enterprise Portfolio', title: 'Enterprise portfolio', desc: 'The top-level view: every initiative, rolled up. Scope is set here — Enterprise — and it sticks for every level below.' },
+    { id: 2, label: '2. Exception', crumb: 'Supply Chain $3m gap', title: 'An exception, selected', desc: 'Drilling into one flagged exception. Portfolio scope stays visible — you never lose where you came from.' },
+    { id: 3, label: '3. Initiative', crumb: 'Supply Chain Consolidation', title: 'The initiative behind it', desc: 'The specific initiative driving that exception — its Gate, Owner, and Latest Forecast, still inside the same scope.' },
+    { id: 4, label: '4. Evidence', crumb: 'Evidence & Lineage', title: 'Evidence and lineage', desc: 'The actual proof — who validated what, when. Four levels deep, and the breadcrumb still shows the whole path.' },
+  ];
+  const drillLevelsEl = document.getElementById('drill-levels');
+  const breadcrumbEl = document.getElementById('breadcrumb');
+  const drillReadoutEl = document.getElementById('drill-readout');
+  function renderBreadcrumb(upTo) {
+    if (upTo === 0) { breadcrumbEl.innerHTML = '<span class="empty">— nothing selected yet —</span><span class="persist">scope: Enterprise · period: FY2027</span>'; return; }
+    const parts = levels.slice(0, upTo).map(l => '<span class="crumb">' + l.crumb + '</span>').join('<span class="sep">›</span>');
+    breadcrumbEl.innerHTML = parts + '<span class="persist">scope: Enterprise · period: FY2027</span>';
+  }
+  function renderDrill(i) {
+    const l = levels[i];
+    Array.from(drillLevelsEl.children).forEach((b, idx) => b.classList.toggle('active', idx === i));
+    renderBreadcrumb(i + 1);
+    drillReadoutEl.innerHTML = '<div class="rtitle">' + l.title + '</div><div class="rdesc">' + l.desc + '</div>';
+  }
+  levels.forEach((l, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'drill-btn'; btn.type = 'button'; btn.textContent = l.label;
+    btn.addEventListener('click', () => renderDrill(i));
+    drillLevelsEl.appendChild(btn);
+  });
+
+  /* beat 2: end-to-end lifecycle, surface-tagged */
+  const lcStages = [
+    { id: 1, label: '1. Opportunity', role: 'Initiative Owner', surf: 'informal', thin: true, title: 'Opportunity', desc: 'An idea surfaces as a possible source of value — not yet costed, not yet owned by a formal process.', feeds: 'Deck names this stage (slide 3) but gives no further mechanics — thin.' },
+    { id: 2, label: '2. Value Case', role: 'Owner → Sponsor', surf: 'web', title: 'Value Case', desc: 'The idea gets a number and a basis for that number. Submitted through the web app.', feeds: 'Feeds the CFO tile "Original Commitment" once formally locked.' },
+    { id: 3, label: '3. Gates PG0–PG5', role: 'Gate reviewers', surf: 'web', title: 'Praxis Gates — PG0 to PG5', desc: 'A maturity ladder — PG0 counts 25%, climbing to PG5 at 100% (slide 18). Gate submissions happen on the web app.', feeds: 'Feeds the MAPV figure on the CEO tile directly.' },
+    { id: 4, label: '4. Commitment', role: 'CFO / Sponsor', surf: 'system', title: 'Commitment — frozen', desc: 'Locks automatically at PG4, at the data layer — not a user action on any screen (slide 16). Immutable from this point on.', feeds: 'Feeds the CFO "Original Commitment vs. Latest Forecast" comparison.' },
+    { id: 5, label: '5. Delivery', role: 'Owner', surf: 'mobile', title: 'Delivery — the live state', desc: 'The Owner reports progress via the mobile app\'s two-minute Quick Update — drives Latest Forecast.', feeds: 'Feeds the CEO "Forecast" and Owner "Commitments due" tiles.' },
+    { id: 6, label: '6. Validated', role: 'Finance', surf: 'web', title: 'Validated — Finance checks the claim', desc: 'A $700k claim might validate at $620k — the gap ages as unsupported (slide 18). Checked in the web Finance workbench.', feeds: 'Feeds the CFO "Delivered → Finance-validated" pipeline.' },
+    { id: 7, label: '7. Banked', role: 'Banking Authority', surf: 'web', title: 'Banked — certified and counted', desc: 'Banked by someone other than the validator (segregation of duties, slide 20, AT-14) — most likely web, though the deck doesn\'t name the exact surface for this one action.', feeds: 'Feeds the CEO "Delivered" tile and the CFO "Banked" tile.' },
+    { id: 8, label: '8. Embed', role: '—', surf: 'unspecified', thin: true, title: 'Embed', desc: 'The value becomes business-as-usual.', feeds: 'Deck names this stage (slide 3) but gives no further mechanics — thin.' },
+    { id: 9, label: '9. Sustain', role: '—', surf: 'unspecified', thin: true, title: 'Sustain', desc: 'Ongoing proof the banked benefit didn\'t quietly reverse.', feeds: 'Deck names this stage (slide 3) but gives no further mechanics — thin.' },
+  ];
+  const surfLabel = { web: 'Web — yours', mobile: 'Mobile', system: 'Backend', informal: 'Informal', unspecified: 'Not specified' };
+  const lcTrackEl = document.getElementById('lc-track');
+  const lcPanelEl = document.getElementById('lc-panel');
+  function renderLc(i) {
+    const s = lcStages[i];
+    Array.from(lcTrackEl.children).forEach((b, idx) => b.classList.toggle('active', idx === i));
+    lcPanelEl.innerHTML = '<div class="lc-head"><span class="lc-title">' + s.title + '</span><span class="surf-tag ' + s.surf + '">' + surfLabel[s.surf] + '</span>' + (s.role !== '—' ? '<span class="lc-role">' + s.role + '</span>' : '') + '</div><p class="lc-desc">' + s.desc + '</p><div class="lc-feeds">→ ' + s.feeds + '</div>';
+  }
+  lcStages.forEach((s, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'lc-btn' + (s.thin ? ' thin' : ''); btn.type = 'button'; btn.textContent = s.label;
+    btn.style.animationDelay = (i * 0.06) + 's';
+    btn.addEventListener('click', () => renderLc(i));
+    lcTrackEl.appendChild(btn);
+  });
+  renderLc(0);
+
+  goTo(0);
+</script>
+</body>
+</html>
