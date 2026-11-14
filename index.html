@@ -219,6 +219,8 @@
   .hs-tile .value.good{ color:var(--good); }
   .hs-tile .note2{ margin-top:3px; font-size:11px; color:var(--muted); }
   .hs-list{ background:var(--surface); border:1px solid var(--line); border-radius:8px; padding:12px 14px; }
+  .hs-list.risk{ background:var(--risk-soft); border-color:var(--risk); }
+  .hs-list.risk .label{ color:var(--risk); }
   .hs-list .label{ font-family:'IBM Plex Mono',monospace; font-size:10.5px; color:var(--muted); text-transform:uppercase; letter-spacing:0.03em; margin-bottom:6px; }
   .hs-list ul{ margin:0; padding-left:16px; font-size:12.5px; }
   .hs-list li{ margin-bottom:4px; }
@@ -418,10 +420,7 @@
         <div class="subhead">Target, forecast, delivered — and exactly what needs you today.</div>
         <div class="demo-box">
           <div class="ceo-grid" id="ceo-grid"></div>
-          <div class="hs-grid" style="grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); margin-top:12px;">
-            <div class="hs-list"><div class="label">Since last review</div><ul><li>MAPV ↓ $2.4m</li><li>Forecast ↓ $1.0m</li><li>Delivered +$2.1m</li><li>3 new Blockers</li></ul></div>
-            <div class="hs-list" style="background:var(--risk-soft); border-color:var(--risk);"><div class="label" style="color:var(--risk);">Needs your action</div><ul><li>Bank $6.5m (CFO certified)</li><li>Tender authority — 12 days waiting</li><li>Supply Chain $3m gap</li></ul></div>
-          </div>
+          <div class="hs-grid" id="ceo-lists" style="grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); margin-top:12px;"></div>
           <div class="pg-note">
             <strong>Same $50m goal, four levels of proof.</strong> Target = the goal, set once. MAPV = a maturity-weighted estimate of what the current portfolio can support — not real progress. Forecast = a human prediction from the Owner doing the work; it should stay close to MAPV, or that's an early-warning sign. Delivered = the only one that's proven fact, not a prediction — it's meant to be far below Forecast mid-year, closing the gap by year-end. A single blended number would hide exactly this gap between "looks healthy" and "actually proven."
           </div>
@@ -756,23 +755,9 @@
     qgridEl.appendChild(div);
   });
 
-  /* beat 3: CEO-only tiles */
-  const ceoTiles = [
-    { label: 'Enterprise Target', value: '$50m', delay: 0 },
-    { label: 'Delivered Value Target (MAPV)', value: '$47m', note: '94% coverage · $3m gap', delay: 0.12 },
-    { label: 'Forecast', value: '$44m', note: '$6m below target', cls: 'risk', delay: 0.24 },
-    { label: 'Delivered', value: '$31m', note: 'Finance-validated', cls: 'good', delay: 0.36 },
-  ];
-  const ceoGridEl = document.getElementById('ceo-grid');
-  ceoTiles.forEach(t => {
-    const div = document.createElement('div');
-    div.className = 'ceo-tile';
-    div.style.animationDelay = t.delay + 's';
-    div.innerHTML = '<div class="label">' + t.label + '</div><div class="value' + (t.cls ? ' ' + t.cls : '') + '">' + t.value + '</div>' + (t.note ? '<div class="note2">' + t.note + '</div>' : '');
-    ceoGridEl.appendChild(div);
-  });
-
-  /* beat 4: role switch */
+  /* Shared dashboard data — Beat 3 (CEO-only view) and Beat 4 (role switcher) both
+     read from this ONE array, so the CEO screen can never drift between the two
+     places it appears. If you change a CEO number, change it here once. */
   const roles = [
     { id: 'ceo', label: 'CEO', tag: 'FY2027', title: 'Your Execution Day · FY2027',
       tiles: [
@@ -783,7 +768,7 @@
       ],
       lists: [
         { label: 'Since last review', items: ['MAPV ↓ $2.4m', 'Forecast ↓ $1.0m', 'Delivered +$2.1m', '3 new Blockers'] },
-        { label: 'Needs your action', items: ['Bank $6.5m (CFO certified)', 'Tender authority — 12 days waiting', 'Supply Chain $3m gap'] },
+        { label: 'Needs your action', risk: true, items: ['Bank $6.5m (CFO certified)', 'Tender authority — 12 days waiting', 'Supply Chain $3m gap'] },
       ]
     },
     { id: 'cfo', label: 'CFO', tag: 'illustrative', title: 'Value trust position',
@@ -819,18 +804,33 @@
     },
   ];
   const EXCLUDED = ['Manual RAG ratings', 'Full initiative lists', 'Raw ledger rows', 'Configuration & methodology', 'Stable, unchanged data'];
+  function listsHtmlFor(lists) {
+    return lists.map(l => '<div class="hs-list' + (l.risk ? ' risk' : '') + '"><div class="label">' + l.label + '</div><ul>' + l.items.map(it => '<li>' + it + '</li>').join('') + '</ul></div>').join('');
+  }
+
+  /* beat 3: CEO-only view — built from roles[0], not a separate copy */
+  const ceoGridEl = document.getElementById('ceo-grid');
+  roles[0].tiles.forEach((t, i) => {
+    const div = document.createElement('div');
+    div.className = 'ceo-tile';
+    div.style.animationDelay = (i * 0.12) + 's';
+    div.innerHTML = '<div class="label">' + t.label + '</div><div class="value' + (t.cls ? ' ' + t.cls : '') + '">' + t.value + '</div>' + (t.note ? '<div class="note2">' + t.note + '</div>' : '');
+    ceoGridEl.appendChild(div);
+  });
+  document.getElementById('ceo-lists').innerHTML = listsHtmlFor(roles[0].lists);
+
+  /* beat 4: role switch */
   const tabsEl = document.getElementById('role-tabs');
   const contentEl = document.getElementById('role-content');
   function renderRole(i) {
     const r = roles[i];
     Array.from(tabsEl.children).forEach((b, idx) => b.classList.toggle('active', idx === i));
     const tilesHtml = r.tiles.map(t => '<div class="hs-tile"><div class="label">' + t.label + '</div><div class="value' + (t.cls ? ' ' + t.cls : '') + '">' + t.value + '</div>' + (t.note ? '<div class="note2">' + t.note + '</div>' : '') + '</div>').join('');
-    const listsHtml = r.lists.map(l => '<div class="hs-list"><div class="label">' + l.label + '</div><ul>' + l.items.map(it => '<li>' + it + '</li>').join('') + '</ul></div>').join('');
     const excludedHtml = EXCLUDED.map(e => '<span class="x-chip">' + e + '</span>').join('');
     contentEl.innerHTML =
       '<div class="home-screen"><div class="hs-head"><span class="hs-title">' + r.title + '</span><span class="source-tag">' + r.tag + '</span></div>' +
       '<div class="hs-grid">' + tilesHtml + '</div>' +
-      '<div class="hs-grid" style="grid-template-columns:repeat(auto-fit,minmax(200px,1fr));">' + listsHtml + '</div>' +
+      '<div class="hs-grid" style="grid-template-columns:repeat(auto-fit,minmax(200px,1fr));">' + listsHtmlFor(r.lists) + '</div>' +
       '<div class="excluded"><div class="x-label">Same, no matter the role — never shown here</div><div class="x-chips">' + excludedHtml + '</div></div></div>';
   }
   roles.forEach((r, i) => {

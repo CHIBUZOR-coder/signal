@@ -118,10 +118,14 @@ This is the single most important thing to preserve in any future edit.
 ## Known past bugs, already fixed — don't reintroduce them
 
 1. **Beats 4 and 5 showed the CEO screen two different, inconsistent ways.** Beat
-   4 originally had a single collapsed "Value at Risk" banner that silently
-   dropped the "Since Last Review" section entirely; Beat 5's CEO tab had the full
-   two-section version. Fixed by making Beat 4 match Beat 5 exactly (both now show
-   "Since last review" + "Needs your action" as two separate boxes).
+   4 originally had its own separate hardcoded tile/list data (`ceoTiles`) that
+   had silently drifted from Beat 5's `roles[0]` — missing the "Since Last
+   Review" section entirely. Fixed structurally, not just patched: Beat 4 now
+   renders directly from `roles[0]` (see `listsHtmlFor()` in the script) — there
+   is no second copy of the CEO screen's data left to drift. **Do not reintroduce
+   a separate `ceoTiles`-style array for Beat 4** — if it needs its own tile
+   order or styling, read from `roles[0]` and reshape in JS, don't duplicate the
+   data.
 2. **CSS specificity bug in the mobile responsive rules.** A mobile override
    `.harrow{ width:36px; }` had *lower* specificity than the base rule
    `.handoff .harrow{ width:100px; }`, so it silently never applied — the arrow
