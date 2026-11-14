@@ -1,0 +1,31 @@
+SIGNAL CEO Screen — The Four Numbers
+
+1. TARGET — $50m
+The fixed annual goal, set by leadership. Not a prediction — just the
+number everything else on the screen is measured against.
+
+2. MAPV (Delivered Value Target) — $47m, 94% coverage, $3m gap
+A maturity-weighted estimate of how much of the Target the current
+portfolio can realistically support, based on how far along each
+initiative is. Not real progress — a formula-based guess. The $3m gap
+ties directly to the "Supply Chain $3m gap" exception named lower on
+the same screen — it's not abstract, it's that one initiative.
+
+3. FORECAST — $44m, $6m below Target
+A human prediction from the Owner actually doing the work. Should stay
+close to MAPV at all times — a widening gap between the two is an
+early-warning sign that something's wrong before the official Gate
+stage has caught up to it.
+
+4. DELIVERED — $31m, Finance-validated
+The only one of the four that is proven fact, not a prediction.
+Expected to sit well below Forecast mid-year — that gap should close
+naturally by year-end. If Delivered ends the year matching Forecast,
+the forecast was accurate; well below it, too optimistic; above it,
+too conservative (a sign of deliberate under-promising).
+
+THE KEY IDEA
+Same $50m goal, four different levels of proof. A single blended
+number would hide exactly the gap between a plan that looks healthy
+and what's actually been proven — which is why the screen shows all
+four instead of one.
