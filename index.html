@@ -415,7 +415,10 @@
         <div class="subhead">Target, forecast, delivered — and exactly what needs you today.</div>
         <div class="demo-box">
           <div class="ceo-grid" id="ceo-grid"></div>
-          <div class="var-banner" id="var-banner"></div>
+          <div class="hs-grid" style="grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); margin-top:12px;">
+            <div class="hs-list"><div class="label">Since last review</div><ul><li>MAPV ↓ $2.4m</li><li>Forecast ↓ $1.0m</li><li>Delivered +$2.1m</li><li>3 new Blockers</li></ul></div>
+            <div class="hs-list" style="background:var(--risk-soft); border-color:var(--risk);"><div class="label" style="color:var(--risk);">Needs your action</div><ul><li>Bank $6.5m (CFO certified)</li><li>Tender authority — 12 days waiting</li><li>Supply Chain $3m gap</li></ul></div>
+          </div>
           <div class="pg-note">
             <strong>Same $50m goal, four levels of proof.</strong> Target = the goal, set once. MAPV = a maturity-weighted estimate of what the current portfolio can support — not real progress. Forecast = a human prediction from the Owner doing the work; it should stay close to MAPV, or that's an early-warning sign. Delivered = the only one that's proven fact, not a prediction — it's meant to be far below Forecast mid-year, closing the gap by year-end. A single blended number would hide exactly this gap between "looks healthy" and "actually proven."
           </div>
@@ -765,7 +768,6 @@
     div.innerHTML = '<div class="label">' + t.label + '</div><div class="value' + (t.cls ? ' ' + t.cls : '') + '">' + t.value + '</div>' + (t.note ? '<div class="note2">' + t.note + '</div>' : '');
     ceoGridEl.appendChild(div);
   });
-  document.getElementById('var-banner').innerHTML = 'Value at Risk · 4 material exceptions · 3 decisions need you — Bank $6.5m (CFO certified) · Tender authority, 12 days waiting · Supply Chain $3m gap';
 
   /* beat 4: role switch */
   const roles = [
