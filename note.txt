@@ -18,6 +18,12 @@ I do NOT build:
 - The backend calculation/authority engine (Eseigbe)
 - The mobile app — My Actions, approvals, Quick Update (Nwakwue)
 
+OWNERSHIP (slide 6 — exact):
+- Frontend/web: I'm Owner. Nwakwue is Deputy.
+- Mobile: Nwakwue is Owner. I'M THE DEPUTY — not uninvolved. If Nwakwue
+  is unavailable, mobile work can land on me on top of my own 100% web
+  load. Real contention risk, worth naming if it comes up.
+
 The one rule governing all of it: the client (my screens) never calculates
 value or decides authority. It only renders what the API sends. All trust
 comes from the backend; my job is to SHOW that trust clearly.
