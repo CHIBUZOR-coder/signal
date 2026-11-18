@@ -1,31 +1,105 @@
-SIGNAL CEO Screen — The Four Numbers
+MY ROLE AND WHAT I'LL SAY — SIGNAL (Section C)
 
-1. TARGET — $50m
-The fixed annual goal, set by leadership. Not a prediction — just the
-number everything else on the screen is measured against.
+====================================
+MY ROLE
+====================================
+Frontend Lead. Full-time, 100%, weeks 2-17.
 
-2. MAPV (Delivered Value Target) — $47m, 94% coverage, $3m gap
-A maturity-weighted estimate of how much of the Target the current
-portfolio can realistically support, based on how far along each
-initiative is. Not real progress — a formula-based guess. The $3m gap
-ties directly to the "Supply Chain $3m gap" exception named lower on
-the same screen — it's not abstract, it's that one initiative.
+I build:
+- The web application (not mobile — that's Nwakwue's)
+- All four role HOME screens: CEO, CFO, Initiative Owner, Finance
+- The 4-level drill-down (Portfolio -> Exception -> Initiative -> Evidence)
+  with persistent context — breadcrumb never resets
+- Everything that "stays on web" because it's too dense for mobile:
+  Run Review, Gap Closure, Value Case/Gate submissions, the Finance
+  assurance workbench, imports, admin, portfolio reports
 
-3. FORECAST — $44m, $6m below Target
-A human prediction from the Owner actually doing the work. Should stay
-close to MAPV at all times — a widening gap between the two is an
-early-warning sign that something's wrong before the official Gate
-stage has caught up to it.
+I do NOT build:
+- The backend calculation/authority engine (Eseigbe)
+- The mobile app — My Actions, approvals, Quick Update (Nwakwue)
 
-4. DELIVERED — $31m, Finance-validated
-The only one of the four that is proven fact, not a prediction.
-Expected to sit well below Forecast mid-year — that gap should close
-naturally by year-end. If Delivered ends the year matching Forecast,
-the forecast was accurate; well below it, too optimistic; above it,
-too conservative (a sign of deliberate under-promising).
+The one rule governing all of it: the client (my screens) never calculates
+value or decides authority. It only renders what the API sends. All trust
+comes from the backend; my job is to SHOW that trust clearly.
 
-THE KEY IDEA
-Same $50m goal, four different levels of proof. A single blended
-number would hide exactly the gap between a plan that looks healthy
-and what's actually been proven — which is why the screen shows all
-four instead of one.
+On Tuesday I'm also on Section B (live Aldor demo, with Promise and
+Nwakwue) — proof our team ships real, production software — right before
+Section C, so I open Section C by bridging from that credibility.
+
+====================================
+WHAT I'LL SAY — SECTION C, BEAT BY BEAT
+====================================
+
+1. OPEN (bridge from Aldor demo)
+"What you just saw is live. What I'm about to show isn't built yet — but
+it's built on the same rule: the client never decides anything, it only
+renders what the API sends it."
+
+2. FRAME IT (the four questions)
+"Every executive asks something different. SIGNAL is built to answer all
+four from one set of numbers."
+- CEO: Will we hit the target, what changed, what needs me?
+- CFO: Can we trust the value — what's validated, banked, at risk?
+- Sponsor: Is my workstream covered, what must happen by next review?
+  (NOTE: no screen exists for Sponsor in the deck — say so if asked,
+  don't invent one)
+- Owner/Finance: What must I update, evidence, validate or escalate now?
+
+3. THE LIFECYCLE (one app, two threads)
+"SIGNAL tracks every promised value outcome from first idea to proven,
+banked result." Nine stages: Opportunity -> Value Case -> Gates (PG0 to
+PG5, six levels, PG0 still counts at 25%) -> Commitment -> Delivery ->
+Validated -> Banked -> Embed -> Sustain. Click through fast — establishing
+there's a real spine, not teaching each stage.
+
+4. DEMO THE CEO SCREEN (strongest ground — real deck numbers, slide 11)
+Walk in order: Target $50m -> MAPV $47m (94% coverage, $3m gap) ->
+Forecast $44m ($6m below target) -> Delivered $31m (Finance-validated) ->
+the Value-at-Risk line (Bank $6.5m CFO certified, Tender authority 12
+days waiting, Supply Chain $3m gap).
+Same $50m goal, four levels of proof — a single blended number would
+hide the gap between "looks healthy" and "actually proven."
+
+5. SWITCH ROLES LIVE
+"The field list is confirmed, the exact layout isn't." Click CFO (or
+Owner/Finance) — show the SAME underlying $3m Supply Chain issue from a
+different angle: CFO sees it as "Challenged value," Owner sees it as a
+task ("resubmit evidence, due in 3 days"), Finance sees it as something
+to validate. Point at the "never shown here" strip at the bottom — same
+across every role, proof the simplicity is deliberate.
+
+6. DRILL DOWN
+"Watch the breadcrumb." Click all 4 levels fast — Portfolio -> Supply
+Chain $3m gap -> Supply Chain Consolidation -> Evidence. Context never
+resets, no matter how deep you go.
+
+7. TIE BACK, HAND OFF
+"Delivery and Forecast move constantly; Commitment and Gate history never
+do, once locked. That line is what Eseigbe's about to defend in detail."
+One or two sentences, then stop — opening the door to Section D, not
+walking through it.
+
+8. CLOSE
+"Sophisticated underneath. Simple on screen."
+
+====================================
+DON'T SAY
+====================================
+- "I've reviewed the prototype" — unless actually true by Tuesday
+- Any CFO/Owner/Finance number as confirmed fact — it's illustrative,
+  only the field names are real (slide 12)
+- Anything about HOW immutability/Gates/Banking works in depth — that's
+  Eseigbe's territory, point at it, don't own it
+- Who raises a "challenge" in the first place — the deck never says;
+  it only describes how one gets resolved (Owner resubmits, Finance
+  re-reviews)
+
+====================================
+LINKS
+====================================
+SIGNAL Role Views (study/presenter tool):
+https://claude.ai/code/artifact/7f43ec9e-acd4-48b7-a768-0aea306ff08a
+Also live at: github.com/ZOEYTECH1/signal (index.html)
+
+Aldor Order Architecture (Section B prep):
+https://claude.ai/code/artifact/0875f907-1490-4a54-beaf-2e3e9d6f6045
