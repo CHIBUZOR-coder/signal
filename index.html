@@ -359,7 +359,7 @@
   <div class="presenter">
     <div class="presenter-top">
       <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
-      <button class="notes-toggle" id="notes-toggle" type="button" aria-pressed="false">
+      <button class="notes-toggle" id="notes-toggle" type="button" aria-pressed="false" title="Show presenter cues: the exact line to say, timing, and staging notes for this beat">
         <span class="dot"></span> Notes
       </button>
     </div>
@@ -434,7 +434,7 @@
 
       <div class="beat-panel" data-beat="4">
         <h2>One dataset. Four lenses.</h2>
-        <div class="subhead">Every role sees the same truth, shaped around their one question — never the same screen twice.</div>
+        <div class="subhead">Every role sees the same truth, shaped around their one question — never the same screen twice. <em>Tap a role below to switch.</em></div>
         <div class="demo-box">
           <div class="role-tabs" id="role-tabs"></div>
           <div id="role-content"></div>
@@ -448,7 +448,7 @@
 
       <div class="beat-panel" data-beat="5">
         <h2>Four clicks deep. Still know where you are.</h2>
-        <div class="subhead">Context never resets — and this is the bridge back to the lifecycle you just saw.</div>
+        <div class="subhead">Context never resets — and this is the bridge back to the lifecycle you just saw. <em>Tap each level below, in order.</em></div>
         <div class="demo-box">
           <div class="breadcrumb" id="breadcrumb">
             <span class="empty">— nothing selected yet —</span>
@@ -685,6 +685,8 @@
     btn.className = 'beat-dot';
     btn.type = 'button';
     btn.textContent = (i + 1);
+    const h2 = p.querySelector('h2');
+    btn.title = h2 ? h2.textContent : 'Close';
     btn.addEventListener('click', () => goTo(i));
     navEl.appendChild(btn);
   });
