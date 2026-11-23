@@ -109,3 +109,8 @@ Also live at: github.com/ZOEYTECH1/signal (index.html)
 
 Aldor Order Architecture (Section B prep):
 https://claude.ai/code/artifact/0875f907-1490-4a54-beaf-2e3e9d6f6045
+
+MAPV is an estimate of a project's total value, combining proven results with potential future gains.
+
+
+1 owasp zap

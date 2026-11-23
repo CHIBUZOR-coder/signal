@@ -248,6 +248,9 @@
   .locklive .col{ border-radius:10px; padding:16px 18px; border:1px solid var(--line); }
   .locklive .col.live{ background:var(--web-soft); }
   .locklive .col.locked{ background:var(--accent-soft); }
+  .locklive .col.mobile{ background:var(--surface-2); }
+  .locklive .col.web{ background:var(--web-soft); }
+  .locklive .col .why{ margin-top:12px; padding-top:10px; border-top:1px solid var(--line); font-size:11.5px; color:var(--muted); font-style:italic; }
   .locklive h3{ display:flex; align-items:center; gap:7px; }
   .pulse-dot{ width:8px; height:8px; border-radius:50%; background:var(--web); animation:dotpulse 1.6s ease-in-out infinite; }
   @keyframes dotpulse{ 0%,100%{ opacity:1; transform:scale(1); } 50%{ opacity:0.4; transform:scale(0.7); } }
@@ -315,6 +318,12 @@
   .surf-tag.informal, .surf-tag.unspecified{ background:var(--surface-2); color:var(--muted); font-style:italic; text-transform:none; }
   .lc-panel .lc-desc{ font-size:13.5px; }
   .lc-panel .lc-feeds{ margin-top:10px; padding-top:10px; border-top:1px solid var(--line); font-size:12px; color:var(--muted); font-family:'IBM Plex Mono',monospace; }
+  .lc-sub-label{ margin-top:14px; padding-top:12px; border-top:1px dashed var(--line); font-family:'IBM Plex Mono',monospace; font-size:10.5px; color:var(--muted); text-transform:uppercase; letter-spacing:0.03em; }
+  .lc-substeps{ display:flex; gap:6px; flex-wrap:wrap; margin:8px 0; }
+  .lc-btn.sub{ font-size:11.5px; padding:6px 11px; opacity:1; animation:none; }
+  .lc-subpanel:empty{ display:none; }
+  .lc-subpanel{ background:var(--surface); border:1px solid var(--line); border-radius:8px; padding:10px 12px; margin-top:4px; }
+  .lc-subpanel .lc-desc{ font-size:12.5px; margin-top:4px; }
 
   .pn-footer{ display:none; margin-top:28px; font-size:12px; color:var(--muted); font-family:'IBM Plex Mono', monospace; max-width:64ch; }
   .wrap.notes-on .pn-footer{ display:block; }
@@ -490,6 +499,47 @@
       </div>
 
       <div class="beat-panel" data-beat="7">
+        <h2>Mobile: an action surface, not a small dashboard</h2>
+        <div class="subhead">Same API, same rules on every client — mobile and web just shape the work differently.</div>
+        <div class="demo-box">
+          <div class="pg-note" style="margin:0 0 14px;">
+            Web, PWA and any native client call the same API. <strong>No client calculates value or decides authority</strong> — this is the same rule from the very first beat, applied to the surface you don't own.
+          </div>
+          <div class="locklive">
+            <div class="col mobile">
+              <h3>📱 Mobile — one ranked inbox</h3>
+              <ul>
+                <li><strong>My Actions</strong> — everything that needs you, ranked</li>
+                <li><strong>Approvals &amp; decisions</strong> — step-up confirm for material actions</li>
+                <li><strong>Validate / certify</strong> — within delegated authority</li>
+                <li><strong>Quick Update</strong> — Done / Not Done, two minutes</li>
+                <li><strong>Blockers &amp; Help</strong> — raise and escalate</li>
+                <li><strong>Evidence capture</strong> — photo or file, with provenance</li>
+              </ul>
+              <div class="why">Short, action-shaped, needs to reach you anywhere. Built by Nwakwue — I'm deputy here.</div>
+            </div>
+            <div class="col web">
+              <h3>💻 Web — dense, comparative work</h3>
+              <ul>
+                <li><strong>Run Review &amp; Gap Closure</strong></li>
+                <li><strong>Value Case &amp; Gate submissions</strong></li>
+                <li><strong>Finance assurance workbench</strong></li>
+                <li><strong>Imports &amp; reconciliation</strong></li>
+                <li><strong>Administration &amp; configuration</strong></li>
+                <li><strong>Portfolio drill-down &amp; reports</strong></li>
+              </ul>
+              <div class="why">Dense, comparative work needs a large screen. This is mine — same screens you saw in Beats 4 and 5.</div>
+            </div>
+          </div>
+        </div>
+        <div class="presenter-note">
+          <div class="pn-head">Cue <span class="pn-time">optional — not in the 15-min script</span></div>
+          <div class="say">"Same rule, split by shape of the work: mobile is one ranked inbox for whatever needs you right now; anything dense or comparative — the screens I just showed you — stays on web."</div>
+          <div class="pn-staging">Slide 13. Use only if asked where mobile fits, or to reinforce the ownership line from slide 6: mobile is Nwakwue's, I'm deputy there the same way he's deputy on web.</div>
+        </div>
+      </div>
+
+      <div class="beat-panel" data-beat="8">
         <div class="demo-box">
           <div class="close-line">
             <div class="big">Sophisticated underneath.</div>
@@ -506,7 +556,7 @@
 
     <div class="nav-row">
       <button class="nav-btn" id="btn-prev" type="button">← Prev</button>
-      <span class="nav-count" id="nav-count">1 / 7</span>
+      <span class="nav-count" id="nav-count">1 / 9</span>
       <button class="nav-btn primary" id="btn-next" type="button">Next →</button>
     </div>
   </div>
@@ -879,7 +929,11 @@
     { id: 4, label: '4. Commitment', role: 'CFO / Sponsor', surf: 'system', title: 'Commitment — frozen', desc: 'Locks automatically at PG4, at the data layer — not a user action on any screen (slide 16). Immutable from this point on.', feeds: 'Feeds the CFO "Original Commitment vs. Latest Forecast" comparison.' },
     { id: 5, label: '5. Delivery', role: 'Owner', surf: 'mobile', title: 'Delivery — the live state', desc: 'The Owner reports progress via the mobile app\'s two-minute Quick Update — drives Latest Forecast.', feeds: 'Feeds the CEO "Forecast" and Owner "Commitments due" tiles.' },
     { id: 6, label: '6. Validated', role: 'Finance', surf: 'web', title: 'Validated — Finance checks the claim', desc: 'A $700k claim might validate at $620k — the gap ages as unsupported (slide 18). Checked in the web Finance workbench.', feeds: 'Feeds the CFO "Delivered → Finance-validated" pipeline.' },
-    { id: 7, label: '7. Banked', role: 'Banking Authority', surf: 'web', title: 'Banked — certified and counted', desc: 'Banked by someone other than the validator (segregation of duties, slide 20, AT-14) — most likely web, though the deck doesn\'t name the exact surface for this one action.', feeds: 'Feeds the CEO "Delivered" tile and the CFO "Banked" tile.' },
+    { id: 7, label: '7. Banked', role: 'Banking Authority', surf: 'web', title: 'Banked — two new actions, not a re-check', desc: 'Validation (Stage 6) is already finished and closed before this starts. Banked doesn\'t re-check that work — it adds two new actions on top of the already-validated amount, most likely web (slide 20, AT-14).', feeds: 'Feeds the CEO "Delivered" tile and the CFO "Banked" tile.',
+      subSteps: [
+        { label: 'Certification', title: 'Certification — governance sign-off', desc: 'A materiality check on top of the already-validated amount, not a re-check of the evidence. The CFO (or a delegate, within a ceiling — e.g. $2m) formally attests to it.' },
+        { label: 'Banking Authority — ledger-final', title: 'Banking Authority — ledger-final', desc: 'A different authority than the validator locks the certified amount into the ledger, permanently. Segregation of duties: whoever validated it can never be the one who banks it.' },
+      ] },
     { id: 8, label: '8. Embed', role: '—', surf: 'unspecified', thin: true, title: 'Embed', desc: 'The value becomes business-as-usual.', feeds: 'Deck names this stage (slide 3) but gives no further mechanics — thin.' },
     { id: 9, label: '9. Sustain', role: '—', surf: 'unspecified', thin: true, title: 'Sustain', desc: 'Ongoing proof the banked benefit didn\'t quietly reverse.', feeds: 'Deck names this stage (slide 3) but gives no further mechanics — thin.' },
   ];
@@ -889,7 +943,23 @@
   function renderLc(i) {
     const s = lcStages[i];
     Array.from(lcTrackEl.children).forEach((b, idx) => b.classList.toggle('active', idx === i));
-    lcPanelEl.innerHTML = '<div class="lc-head"><span class="lc-title">' + s.title + '</span><span class="surf-tag ' + s.surf + '">' + surfLabel[s.surf] + '</span>' + (s.role !== '—' ? '<span class="lc-role">' + s.role + '</span>' : '') + '</div><p class="lc-desc">' + s.desc + '</p><div class="lc-feeds">→ ' + s.feeds + '</div>';
+    const subHtml = s.subSteps
+      ? '<div class="lc-sub-label">Banked splits into two separate actions — tap each:</div><div class="lc-substeps" id="lc-substeps"></div><div class="lc-subpanel" id="lc-subpanel"></div>'
+      : '';
+    lcPanelEl.innerHTML = '<div class="lc-head"><span class="lc-title">' + s.title + '</span><span class="surf-tag ' + s.surf + '">' + surfLabel[s.surf] + '</span>' + (s.role !== '—' ? '<span class="lc-role">' + s.role + '</span>' : '') + '</div><p class="lc-desc">' + s.desc + '</p><div class="lc-feeds">→ ' + s.feeds + '</div>' + subHtml;
+    if (s.subSteps) {
+      const substepsEl = document.getElementById('lc-substeps');
+      const subpanelEl = document.getElementById('lc-subpanel');
+      s.subSteps.forEach((sub, idx) => {
+        const btn = document.createElement('button');
+        btn.className = 'lc-btn sub'; btn.type = 'button'; btn.textContent = sub.label;
+        btn.addEventListener('click', () => {
+          Array.from(substepsEl.children).forEach((b, bidx) => b.classList.toggle('active', bidx === idx));
+          subpanelEl.innerHTML = '<div class="lc-title" style="font-size:13px;">' + sub.title + '</div><p class="lc-desc">' + sub.desc + '</p>';
+        });
+        substepsEl.appendChild(btn);
+      });
+    }
   }
   lcStages.forEach((s, i) => {
     const btn = document.createElement('button');

@@ -1,0 +1,185 @@
+SIGNAL GATES AND LIFECYCLE CONNECTIONS
+======================================
+
+GATE SYSTEM OVERVIEW
+--------------------
+There are 6 gate levels: PG0 through PG5.
+Gates are checkpoints embedded in the 9-stage lifecycle spine.
+They are NOT a separate loop that finishes before commitment.
+Commitment happens AT PG4, not after PG5.
+
+PG0 starts at 25% credit.
+PG4 is where the Original Commitment freezes (immutable).
+PG5 is the final maturity checkpoint.
+
+STAGE-TO-GATE MAPPING
+---------------------
+
+Stage 1: OPPORTUNITY      --> PG0 (entry point; 25% credit begins)
+Stage 2: VALUE CASE       --> PG0 to PG3 (MAPV uses rising gate factor)
+Stage 3: GATES            --> PG0, PG1, PG2, PG3 (pre-commitment checkpoints)
+Stage 4: COMMITMENT       --> PG4 (Original Commitment freezes here)
+Stage 5: DELIVERY         --> PG4 to PG5 (work runs while maturing)
+Stage 6: VALIDATED        --> PG5 (Finance validates near full maturity)
+Stage 7: BANKED           --> PG5 (CFO certifies at final gate)
+Stage 8: EMBED            --> PG5 complete (value goes operational)
+Stage 9: SUSTAIN          --> PG5 complete (check vs original Target)
+
+GATE EXPLANATIONS (simple sentence each)
+----------------------------------------
+
+PG0: The idea enters at the first gate with 25% credit.
+PG1: Early gate; the value case starts to take shape.
+PG2: Mid gate; the plan is de-risked.
+PG3: Pre-commit gate; ready to lock the number.
+PG4: Commitment gate; the Original Commitment freezes forever.
+PG5: Final gate; full maturity before delivery completes.
+
+DASHBOARD CONNECTIONS
+---------------------
+Target      <- Stage 1 Opportunity (the goal, set once)
+MAPV        <- Stage 2 Value Case + Stage 3 Gate factor (maturity-weighted estimate)
+Forecast    <- Owner's prediction (runs alongside lifecycle)
+Delivered   <- Stage 6 Validated + Stage 7 Banked (the only proven fact)
+
+KEY RULE
+--------
+You do not finish PG0 through PG5 before committing.
+You walk the lifecycle stages and pass gates as you mature.
+Commitment happens at PG4 (Stage 4), then Delivery continues and PG5 can still occur afterward.
+
+WHO / WHAT TRIGGERS A GATE INCREASE
+-----------------------------------
+The artifact does not name a single role that clicks "advance gate."
+What is known:
+
+- Gates do NOT auto-slide forward as tasks are checked off.
+- Web scope includes "Value Case/Gate submissions" and "Run Review" —
+  so someone submits evidence that the initiative has matured.
+- A review evaluates the evidence.
+- If it passes, the gate moves up and locks.
+- The authority policy engine records and enforces the gate decision:
+  it checks role × scope × authority × materiality × delegation on
+  every request.
+- Once recorded, the gate decision and snapshot are immutable — the
+  database rejects any UPDATE or DELETE on them.
+
+Bottom line: a person (Owner / Finance / reviewer) submits evidence,
+a review evaluates it, and the system locks the gate upward. The gate
+moves by human decision backed by system enforcement, not by automatic
+project progress.
+
+COMMITMENT SUMMARY (Stage 4 / PG4)
+----------------------------------
+- Commitment is Stage 4 of the 9-stage lifecycle. It happens AT PG4,
+  not after all gates are finished.
+- At PG4, the Original Commitment freezes permanently. It can never
+  be rewritten, updated, or deleted. Corrections are added as new
+  linked records (e.g., Value Adjustment), never overwrites.
+- It is the fixed benchmark executives compare against: "we committed
+  $X, what have we actually delivered?"
+- Commitment is separate from Target, Forecast, and Delivered:
+    * Target = the ambition, set once at Stage 1 (e.g., 50).
+    * Commitment = the frozen pledge at PG4 (e.g., 40).
+    * Forecast = the Owner's prediction; moves daily.
+    * Delivered = proven work rising toward Commitment.
+- Delivered grows toward Commitment, NOT necessarily toward Target.
+  The gap between Target and Commitment is the Value-at-Risk.
+- Commitment is NOT one of the four CEO dashboard numbers
+  (Target, MAPV, Forecast, Delivered). It operates behind the scenes
+  as the immutable reference point.
+- Once frozen, Commitment is immutable under the same rules as gate
+  decisions: database-level enforcement, hash-chained audit log, no
+  standing UPDATE/DELETE on immutable tables.
+
+DELIVERY SUMMARY (Stage 5)
+--------------------------
+- Delivery is Stage 5 of the 9-stage lifecycle. It is the actual work
+  of producing value, running after Commitment freezes at PG4.
+- Delivery feeds the Delivered number on the executive dashboard.
+- As work progresses, Validated and Banked values rise.
+- Delivery spans PG4 through PG5 — work continues while the initiative
+  matures to the final gate.
+- The gap between Forecast and Delivered is the executive's key
+  visibility point: Forecast is a prediction; Delivered is proven fact.
+- Delivered does not equal Commitment. Commitment is the frozen pledge;
+  Delivered is what has actually been proven so far.
+- Delivery is mutable (progress changes daily) until it is validated
+  (Stage 6) and banked (Stage 7), at which point it becomes immutable
+  proof.
+
+DELIVERY AND VALIDATION — WORKING TOGETHER
+------------------------------------------
+Yes — exactly right. Delivery produces the work; Validation confirms it.
+Only what Finance validates actually counts as Delivered on the
+dashboard. They work hand in hand: Delivery creates the value,
+Validation makes it count.
+
+- Stage 5 (Delivery): Work is actually done. Value is produced.
+- Stage 6 (Validated): Finance reviews that work and confirms it's real.
+  Only then does it count toward the Delivered number.
+- Done but not validated: sits in a queue; not counted yet (e.g., the
+  $80k gap ages until new evidence justifies another tranche).
+- Validated: added exactly to Delivered. Tranches can never exceed the
+  original claim (database constraint).
+
+VALIDATED SUMMARY (Stage 6)
+---------------------------
+- Validated is Stage 6 of the 9-stage lifecycle. Finance validates
+  specific tranches of work.
+- Each validated tranche adds exactly to Delivered.
+- Challenged or unsupported remaining value counts as zero until
+  re-assured.
+- Tranches can never exceed the original claim (database constraint).
+- Validated work becomes the basis for Banked (Stage 7).
+
+BANKED SUMMARY (Stage 7)
+------------------------
+- Banked is Stage 7 of the 9-stage lifecycle. It is Finance-validated
+  value that is CFO-certified.
+- Only validated values can be banked. Banked does NOT add to Delivered;
+  Delivered already increased at validation. Banked locks the validated
+  value as final, immutable proof.
+- This is the "proven fact" number on the dashboard — the only one that
+  is real, not a prediction.
+- Segregation of duties: the person who validates a value can never
+  also bank it. Finance validates; a different authority (CFO or
+  delegated Finance Director) banks.
+- Ceiling rule: The CFO can delegate banking up to a ceiling (e.g., $2m)
+  to a Finance Director. Anything above that ceiling always stays with
+  the CFO — it never falls through to the delegate.
+- Once banked, the value is immutable. Corrections are added as new
+  linked records (Banking Adjustment), never overwrites.
+
+EMBED SUMMARY (Stage 8)
+------------------------
+- Embed is Stage 8 of the 9-stage lifecycle. The system integrates
+  delivered value into the client's operations.
+- Connects to "One app, two threads" — value embeds across web,
+  mobile, and SAP platforms.
+- The delivered value becomes operational reality for the executive's
+  organization.
+
+EMBED — EMPHASIS
+----------------
+Embed = taking the flow/method that produced the banked value and
+making it part of everyday routine across web, mobile, and SAP — so
+the positive result sustains instead of being a one-time win.
+
+Example:
+- Banked: $200k saved using better routes (proven, validated, CFO-certified).
+- Embed: Drivers use the mobile app daily to log routes; managers
+  watch route savings on web; SAP auto-updates fuel costs and route
+  plans. The $200k saving becomes how the company operates, not just
+  a dashboard number.
+
+
+  So MAPV is: what's proven + a confidence-weighted estimate of what's left. It's not full future potential — it's discounted by maturity.
+▣  Build · Nemotron 3.5 Super VL Free · 9.7s
+
+MAPV = Validated Delivered + (Eligible Remaining Value × Current Gate Factor)
+MAPV equals your proven delivered value plus your remaining eligible value, weighted by how mature the initiative is at its current gate.
+
+- Validated Delivered: The proven, Finance-confirmed value so far.
+- Eligible remaining value × Gate factor: Not just any "future potential gain" — it's the remaining value that's still eligible, weighted by how mature/de-risked it is (PG0 starts at 25% credit; PG5 is near full credit).
+- Challenged/unsupported remaining value counts as zero until it's re-assured.

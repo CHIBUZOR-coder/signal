@@ -1,0 +1,123 @@
+LIFECYCLE STAGES - EXECUTIVE DASHBOARD CONNECTIONS
+
+1. OPPORTUNITY
+   - Gate: PG0 (entry point; 25% credit begins)
+   - The initial identification of a value proposition
+   - Where the executive goal/target gets set once
+   - Connection: The Target number on the executive dashboard originates here
+   - This is the ambition — the goal they're trying to reach
+   - Set once and stays fixed throughout the lifecycle
+
+2. VALUE CASE
+   - Gate: PG0 to PG3 (MAPV uses rising gate factor as it matures)
+   - Proves what the portfolio can support
+   - MAPV (Maturity-Adjusted Portfolio Value) is calculated here
+   - MAPV = Validated Delivered + (Gate factor × eligible remaining value)
+   - Connection: MAPV on executive dashboard originates here
+   - Challenged/unsupported remaining value counts as zero until re-assured
+
+3. GATES PG0–PG5
+   - Gate: PG0, PG1, PG2, PG3 (the pre-commitment checkpoints themselves)
+   - Decision points throughout the lifecycle
+   - PG0 starts at 25%; gates freeze commitments and gate history
+   - These numbers never change once set (immutable)
+   - Connection: Gate status affects MAPV and Forecast on dashboard
+   - PG4 is where Original Commitment freezes
+
+4. COMMITMENT
+   - Gate: PG4 (passing this gate IS the commitment event)
+   - The Original Commitment freezes at PG4
+   - This is the frozen number executives compare against
+   - Connection: Executives see "we committed $X, what have we actually delivered?"
+   - Never rewritten — history is preserved
+
+5. DELIVERY
+   - Gate: PG4 to PG5 (work runs while the initiative keeps maturing)
+   - The actual work of producing value
+   - Feeds the Delivered number on the dashboard
+   - Connection: As work progresses, Validated and Banked values rise
+   - The gap between Forecast and Delivered is the executive's key visibility point
+
+   DEFINITION — "Delivery" (this stage):
+   The actual, ongoing work of producing the promised value — Owner-
+   reported, mutable, changes daily. This is raw progress only: doing the
+   work and reporting status. By itself, Stage 5 proves nothing and counts
+   for nothing on the dashboard yet — it becomes proof only one stage
+   later, at Validation (Stage 6), when Finance checks and signs off on a
+   tranche. See Stage 6 for how the dashboard number "Delivered" is
+   actually built from this stage's raw work.
+
+6. VALIDATED
+   - Gate: PG5 (Finance validates near full maturity)
+   - Finance validates specific tranches of work
+   - Each validated tranche adds exactly to Delivered
+   - Example: $80k gap "ages in a queue" until new evidence justifies more
+   - Connection: Every validated tranche directly increases Delivered on dashboard
+   - Tranches can never exceed the original claim (database constraint)
+
+   DEFINITION — "Delivered" (the dashboard number):
+   Built entirely from this stage, not from Stage 5. The dashboard figure
+   called "Delivered" is shorthand for "Validated Delivered" (the exact
+   term the MAPV formula uses) — the running total of every tranche of
+   work Finance has validated here, and nothing more. A claim only adds to
+   Delivered once Finance checks and signs off on it, never just because
+   the Owner reported it done back in Stage 5. Ledger-derived, so it rises
+   in exact increments: a $700k claim where Finance validates $620k adds
+   exactly $620k to Delivered — the remaining $80k sits unconfirmed in a
+   queue, not counted, until new evidence justifies another tranche.
+   How it differs from the other three executive numbers:
+     - Target: the original ambition, set once, never moves
+     - Commitment: the frozen pledge at PG4, what was promised
+     - Forecast: the Owner's daily prediction of what will happen
+     - Delivered: the only one of the four that's proven fact, not a
+       prediction or a pledge
+   Delivered is not the same as Banked: Banked is a further-locked,
+   CFO-certified subset of what's already Delivered. Banked value does
+   not add to Delivered again — it's already counted; Banked just marks
+   that portion as final and audited.
+
+7. BANKED
+   - Gate: PG5 (CFO certifies and banking happens at the final gate)
+   - Finance-validated values that are CFO-certified
+   - Above materiality threshold, certified for banking
+   - Connection: This is the "proven fact" number on dashboard — the only one that's real, not a prediction
+   - The person who validates a value can never also bank it (segregation of duties)
+   - CFO can delegate banking up to a ceiling (e.g., $2m); above that stays with CFO
+
+   DEFINITION — "Banked" is two NEW actions on top of an already-validated
+   amount, not a re-check of it. Validation (Stage 6) is finished and
+   closed before Banked even starts:
+
+     Stage 6 (VALIDATED) — already done, produces "Delivered"
+       Finance validates -> confirms evidence, amount is accurate
+     ---------------- Stage 6 ends. Stage 7 begins. ----------------
+     Stage 7 (BANKED) — two new actions on the already-validated amount
+       1. Certification -> CFO (or delegate) materiality/governance sign-off
+       2. Banking Authority locks it -> ledger-final, immutable
+
+   Banked does not add new value to Delivered — that amount was already
+   counted at validation. Banking just takes a (possibly smaller) subset
+   of the already-Delivered amount and marks that portion certified and
+   permanently locked.
+
+8. EMBED
+   - Gate: PG5 complete (value goes operational after the final gate)
+   - System integrates delivered value into client operations
+   - Connects to "One app, two threads" principle
+   - Value embeds across web/mobile/SAP platforms
+   - Connection: The delivered value becomes operational reality for the executive's organization
+
+9. SUSTAIN
+   - Gate: PG5 complete (checked against the original Target post-gate)
+   - Long-term viability of delivered value
+   - Executives see whether value sustains the original Target/MAPV goal
+   - Connection: Persistent Value-at-Risk gap assessment — does delivered value sustain the original ambition?
+   - Key question: Is the organization better off long-term having gone through this lifecycle?
+
+EXECUTIVE DASHBOARD SUMMARY (4 Numbers):
+- Target: From Opportunity — the goal
+- MAPV: From Value Case + Gates — maturity-weighted estimate
+- Forecast: From Owner's prediction — what will happen
+- Delivered: From Validated + Banked — what has been proven
+
+Each stage leaves an immutable trace in the audit log that the API reads to render the four-number dashboard. The lifecycle trail ensures every dashboard number can be traced back to its originating stage.
