@@ -101,6 +101,40 @@ DON'T SAY
   re-reviews)
 
 ====================================
+IF ASKED — SAP IMPORTS (slides 15, 26)
+====================================
+What SAP is: the ERP system most large enterprises already run their
+business on — finance, inventory, procurement, sales all tracked there.
+For a client whose numbers already live in SAP, that's the real system
+of record — if they saved $200k on logistics, that saving already shows
+up as real transactions inside their SAP ledgers.
+
+Why SIGNAL imports from it: instead of asking a client to re-type SAP
+data into SIGNAL by hand, SIGNAL pulls relevant numbers in directly.
+
+What to say if asked:
+"Some clients already have their numbers in SAP — rather than
+re-entering that by hand, SIGNAL imports it directly. It's strictly
+one-way: SAP is read-only, SIGNAL never writes anything back into it."
+
+Four supporting points if pressed further:
+- Staged, not a direct feed: Import -> Validate -> Preview -> Reconcile
+  -> Confirm (slide 26). Nothing lands in live numbers untouched.
+- Every imported row is traceable: source system, mapping version, and
+  a hash stored on every row.
+- Failed rows are parked and retried; idempotency keys stop duplicate
+  imports on retry.
+- Imported value is data, not assurance — it still has to pass the
+  normal Validated -> Certified -> Banked workflow before it counts.
+  No client, including SAP import, skips the "no client decides
+  authority" rule.
+
+Ownership: this is slides 15/26, Section D/G territory (Eseigbe/
+Owolabi), not something I build. If drilled into implementation specifics
+(retry logic, secrets store, idempotency mechanics) — same posture as
+Gates/Banking: "that's their section, I can point you there."
+
+====================================
 LINKS
 ====================================
 SIGNAL Role Views (study/presenter tool):

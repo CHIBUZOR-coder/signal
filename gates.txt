@@ -145,9 +145,13 @@ BANKED SUMMARY (Stage 7)
 - Segregation of duties: the person who validates a value can never
   also bank it. Finance validates; a different authority (CFO or
   delegated Finance Director) banks.
-- Ceiling rule: The CFO can delegate banking up to a ceiling (e.g., $2m)
-  to a Finance Director. Anything above that ceiling always stays with
-  the CFO — it never falls through to the delegate.
+- DEFAULT: the CFO is the Banking Authority. By default the CFO does
+  both — certifies the value, then also personally banks it. There is
+  no separate third role in the common case.
+- Ceiling rule: The CFO MAY delegate just the banking action (never
+  certification) up to a ceiling (e.g., $2m) to a Finance Director.
+  Anything at or above that ceiling always stays with the CFO — it
+  never falls through to the delegate, no matter what.
 - Once banked, the value is immutable. Corrections are added as new
   linked records (Banking Adjustment), never overwrites.
 

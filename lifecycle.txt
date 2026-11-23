@@ -92,8 +92,20 @@ LIFECYCLE STAGES - EXECUTIVE DASHBOARD CONNECTIONS
        Finance validates -> confirms evidence, amount is accurate
      ---------------- Stage 6 ends. Stage 7 begins. ----------------
      Stage 7 (BANKED) — two new actions on the already-validated amount
-       1. Certification -> CFO (or delegate) materiality/governance sign-off
+       1. Certification -> CFO materiality/governance sign-off
        2. Banking Authority locks it -> ledger-final, immutable
+
+   WHO BANKS — the default is the CFO, full stop:
+   By default, the CFO does BOTH steps — certifies it, then also banks it
+   themselves. The CFO is the Banking Authority unless they choose to
+   delegate. The only exception: the CFO MAY delegate step 2 (banking
+   only, never certification) to a Finance Director, and only for amounts
+   under a set ceiling (e.g. $2m). Anything at or above that ceiling is
+   banked by the CFO personally — it can never be delegated, no matter
+   what. So in the common case there is no third role: one person, the
+   CFO, both certifies and banks. "Banking Authority" just means
+   "whoever currently holds the right to bank this amount" — usually the
+   CFO, occasionally a delegated Finance Director for smaller sums.
 
    Banked does not add new value to Delivered — that amount was already
    counted at validation. Banking just takes a (possibly smaller) subset
